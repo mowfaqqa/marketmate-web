@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { WorkspaceShell } from "@/components/workspace-shell";
+import { StudioGraphic } from "@/components/studio-graphic";
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api";
 import { money, type ProductList, type Product } from "@/lib/catalogue";
@@ -394,6 +395,9 @@ function StudioWorkspace() {
                     </Button>
                   ))}
                 </div>
+                {draft.approvedAt && !job.archived && !change && (
+                  <StudioGraphic jobId={job.id} draftId={draft.id} offer={!!job.facts.expires} service={products.some(product => product.id === job.productId && product.type === "SERVICE")} />
+                )}
                 <Button
                   disabled={
                     busy ||
