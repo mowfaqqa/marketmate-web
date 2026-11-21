@@ -5,7 +5,8 @@
     "dev": "next dev",
     "build": "next build --webpack",
     "start": "next start",
-    "check": "tsc --noEmit"
+    "check": "tsc --noEmit",
+    "check:deps": "node scripts/check-dependencies.mjs"
   },
   "dependencies": {
     "next": "^16.0.0",
@@ -24,5 +25,6 @@
     "@types/react-dom": "^19.2.0",
     "tailwindcss": "^4.1.0",
     "@tailwindcss/postcss": "^4.1.0"
-  }
+  },
+  "packageManager": "pnpm@10.18.2"
 }
