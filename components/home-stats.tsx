@@ -7,7 +7,11 @@ export function HomeStats() {
   const [count, setCount] = useState<number>();
   const [studio, setStudio] = useState<{
     total: number;
-    usage: { remaining: number; localEnabled: boolean };
+    usage: {
+      remaining: number;
+      localEnabled: boolean;
+      generationEnabled: boolean;
+    };
   }>();
   useEffect(() => {
     api<typeof studio>("/studio")
@@ -38,11 +42,13 @@ export function HomeStats() {
         },
         {
           label: "AI allowance",
-          value: studio?.usage.localEnabled
+          value: studio?.usage.generationEnabled
             ? String(studio.usage.remaining)
             : "—",
-          note: studio?.usage.localEnabled
-            ? "Local sample units remaining"
+          note: studio?.usage.generationEnabled
+            ? studio.usage.localEnabled
+              ? "Local sample units remaining"
+              : "AI units remaining"
             : "Manual drafts are available",
           icon: CalendarDays,
         },

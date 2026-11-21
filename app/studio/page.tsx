@@ -1,10 +1,12 @@
 "use client";
+import { useAutosave } from "@/hooks/use-autosave";
+import { SharePromotion } from "@/components/share-promotion";
 
 import { useCallback, useEffect, useState } from "react";
 import { WorkspaceShell } from "@/components/workspace-shell";
 import { StudioGraphic } from "@/components/studio-graphic";
 import { Button } from "@/components/ui/button";
-import { api } from "@/lib/api";
+import { api, ApiError } from "@/lib/api";
 import { money, type ProductList, type Product } from "@/lib/catalogue";
 
 type Facts = {
@@ -43,6 +45,8 @@ type Overview = {
     remaining: number;
     end: string;
     localEnabled: boolean;
+    generationEnabled: boolean;
+    generationMode: string;
   };
   jobs: Job[];
 };
@@ -74,6 +78,7 @@ function StudioWorkspace() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const [autosaveConflict, setAutosaveConflict] = useState(false);
   const [edits, setEdits] = useState<Record<string, string>>({});
 
   const refresh = useCallback(
@@ -99,14 +104,14 @@ function StudioWorkspace() {
   const jobId = job?.id;
   const jobStatus = job?.status;
   useEffect(() => {
-    if (!jobId || jobStatus !== "pending") return;
+    if (!jobId || !["pending", "running"].includes(jobStatus ?? "")) return;
     let cancelled = false;
     const timer = setInterval(() => {
       void api<Job>(`/studio/${jobId}`)
         .then((next) => {
           if (cancelled) return;
           setJob(next);
-          if (next.status !== "pending") return refresh();
+          if (!["pending", "running"].includes(next.status)) return refresh();
         })
         .catch((err) => {
           if (!cancelled) setError(err.message);
@@ -125,6 +130,7 @@ function StudioWorkspace() {
     try {
       await fn();
     } catch (err) {
+      if (err instanceof ApiError && err.status === 409) setAutosaveConflict(true);
       setError(err instanceof Error ? err.message : "Please try again.");
     } finally {
       setBusy(false);
@@ -136,6 +142,18 @@ function StudioWorkspace() {
       (draft, index, all) =>
         all.findIndex((item) => item.variant === draft.variant) === index,
     ) ?? [];
+  const changedDraft = latest.find(draft => edits[draft.id] !== undefined && edits[draft.id] !== draft.text);
+  const online = useAutosave({
+    dirty: !!changedDraft, revision: JSON.stringify(edits),
+    blocked: busy || autosaveConflict || !!error || !!job?.archived || !changedDraft || !edits[changedDraft.id]?.trim(),
+    reconnect: () => setError(""),
+    save: () => { if (job && changedDraft) void action(async () => {
+      const saved = await post<Draft>(`/studio/${job.id}/edit`, { draftId: changedDraft.id, text: edits[changedDraft.id] });
+      setJob(current => current?.id === job.id ? { ...current, drafts: [saved, ...current.drafts] } : current);
+      setEdits(current => { const next = { ...current }; delete next[changedDraft.id]; return next; });
+      setNotice("Revision saved. Review it before approving.");
+    }); },
+  });
   return (
     <div className="mx-auto max-w-4xl space-y-6">
       <header>
@@ -161,6 +179,12 @@ function StudioWorkspace() {
       {notice && (
         <p role="status" className="text-emerald-800">
           {notice}
+        </p>
+      )}
+      {overview?.usage.generationMode === "openai" && (
+        <p className="text-sm text-slate-600">
+          Generation sends selected product facts and your business name to
+          OpenAI. Review every draft before sharing.
         </p>
       )}
       <section className="space-y-4 rounded-xl border bg-white p-5">
@@ -273,7 +297,7 @@ function StudioWorkspace() {
             <div className="flex flex-wrap gap-2">
               {(sourceDraftId ? [true] : [true, false]).map(
                 (manual) =>
-                  (manual || overview?.usage.localEnabled) && (
+                  (manual || overview?.usage.generationEnabled) && (
                     <Button
                       key={String(manual)}
                       disabled={busy || !key}
@@ -299,12 +323,14 @@ function StudioWorkspace() {
                         ? sourceDraftId
                           ? "Duplicate draft · 0 units"
                           : "Start manual draft · 0 units"
-                        : "Generate local samples · 1 unit"}
+                        : overview?.usage.localEnabled
+                          ? "Generate local samples · 1 unit"
+                          : "Generate with AI · 1 unit"}
                     </Button>
                   ),
               )}
             </div>
-            {!overview?.usage.localEnabled && (
+            {!overview?.usage.generationEnabled && (
               <p className="text-sm text-slate-600">
                 Generation is unavailable. You can write a manual draft.
               </p>
@@ -318,7 +344,7 @@ function StudioWorkspace() {
             <h2 className="text-lg font-semibold">
               {job.facts.product} drafts
             </h2>
-            {job.status !== "pending" && (
+            {!["pending", "running"].includes(job.status) && (
               <Button
                 disabled={busy}
                 onClick={() =>
@@ -335,7 +361,14 @@ function StudioWorkspace() {
               </Button>
             )}
           </div>
-          {job.status === "pending" && <p role="status">Generation queued…</p>}
+          {["pending", "running"].includes(job.status) && (
+            <p role="status">
+              {job.status === "running"
+                ? "Preparing your drafts…"
+                : "Generation queued…"}{" "}
+              You can leave and return.
+            </p>
+          )}
           {job.error && <p role="alert">{job.error}</p>}
           {latest.map((draft) => {
             const edited = edits[draft.id] ?? draft.text;
@@ -350,13 +383,14 @@ function StudioWorkspace() {
                     disabled={job.archived || busy}
                     value={edited}
                     onChange={(e) =>
-                      setEdits((old) => ({
+                      (setError(""), setEdits((old) => ({
                         ...old,
                         [draft.id]: e.target.value,
-                      }))
+                      })))
                     }
                   />
                 </label>
+                <p role="status" className="text-sm text-muted-foreground">{change ? (online ? "Unsaved changes · autosave pending" : "Offline · changes remain in this tab") : "Saved revision"}</p>
                 <div className="flex flex-wrap gap-2">
                   {(["edit", "approve", "copy"] as const).map((operation) => (
                     <Button
@@ -395,8 +429,18 @@ function StudioWorkspace() {
                     </Button>
                   ))}
                 </div>
+                {draft.approvedAt && !job.archived && !change && <SharePromotion jobId={job.id} draftId={draft.id} />}
                 {draft.approvedAt && !job.archived && !change && (
-                  <StudioGraphic jobId={job.id} draftId={draft.id} offer={!!job.facts.expires} service={products.some(product => product.id === job.productId && product.type === "SERVICE")} />
+                  <StudioGraphic
+                    jobId={job.id}
+                    draftId={draft.id}
+                    offer={!!job.facts.expires}
+                    service={products.some(
+                      (product) =>
+                        product.id === job.productId &&
+                        product.type === "SERVICE",
+                    )}
+                  />
                 )}
                 <Button
                   disabled={
@@ -487,9 +531,11 @@ function StudioWorkspace() {
             disabled={busy}
             key={item.id}
             onClick={() =>
-              void action(async () =>
-                setJob(await api<Job>(`/studio/${item.id}`)),
-              )
+              void action(async () => {
+                if (changedDraft && !confirm("Open saved work? Copy any unsaved text first.")) return;
+                setJob(await api<Job>(`/studio/${item.id}`));
+                setAutosaveConflict(false);
+              })
             }
           >
             {item.facts.product} ·{" "}

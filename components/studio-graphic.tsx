@@ -1,5 +1,6 @@
 "use client";
 
+import { SharePromotion } from "@/components/share-promotion";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
@@ -86,6 +87,7 @@ export function StudioGraphic({ jobId, draftId, offer, service }: {
         {preview && <div className="space-y-3">
           <img src={preview.url} alt="Branded graphic from the approved draft" className="max-h-[32rem] w-auto max-w-full rounded-lg border" />
           <Button type="button" disabled={busy} onClick={() => void download(preview.id)}>Download PNG</Button>
+          <SharePromotion jobId={jobId} draftId={draftId} graphicId={preview.id} />
         </div>}
       </div>
     </details>

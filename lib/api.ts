@@ -1,4 +1,4 @@
-export type Business = { id: string; name: string; category: string; description: string; location: string; contact: string | null; language: string; tone: string; brandColor: string; version: number; updatedAt: string };
+export type Business = { logoKey: string | null; id: string; name: string; category: string; description: string; location: string; contact: string | null; language: string; tone: string; brandColor: string; version: number; updatedAt: string };
 export type Account = { email: string; verified: boolean; business: Business };
 export class ApiError extends Error { constructor(message: string, public status: number) { super(message); } }
 export async function api<T>(path: string, options: RequestInit = {}): Promise<T> {
