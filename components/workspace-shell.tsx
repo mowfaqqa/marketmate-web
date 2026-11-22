@@ -12,7 +12,7 @@ import {
   Menu,
 } from "lucide-react";
 const navigation = [
-  { label: "Home", href: "/", icon: Home },
+  { label: "Home", href: "/dashboard", icon: Home },
   { label: "Marketing Studio", href: "/studio", icon: Sparkles },
   { label: "Products", href: "/products", icon: Package },
   { label: "Planner", href: "/planner", icon: CalendarDays },
@@ -22,7 +22,7 @@ const navigation = [
 export function WorkspaceShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const selected = (href: string) =>
-    href === "/" ? pathname === "/" : pathname.startsWith(href);
+    pathname === href || pathname.startsWith(href + "/");
   return (
     <div className="min-h-screen lg:pl-64">
       <a
@@ -33,7 +33,7 @@ export function WorkspaceShell({ children }: { children: React.ReactNode }) {
       </a>
       <aside className="fixed inset-y-0 left-0 hidden w-64 flex-col border-r border-border bg-white p-6 lg:flex">
         <Link
-          href="/"
+          href="/dashboard"
           className="flex items-center gap-2 text-2xl font-bold tracking-tight"
         >
           <span className="rounded-lg bg-primary p-2 text-white">
@@ -68,7 +68,7 @@ export function WorkspaceShell({ children }: { children: React.ReactNode }) {
         </div>
       </aside>
       <header className="flex min-h-20 items-center justify-between border-b border-slate-200 bg-white px-5 lg:px-10">
-        <Link href="/" className="font-semibold lg:hidden">
+        <Link href="/dashboard" className="font-semibold lg:hidden">
           MarketMate
         </Link>
         <span className="hidden font-semibold lg:inline">Your workspace</span>
@@ -87,7 +87,7 @@ export function WorkspaceShell({ children }: { children: React.ReactNode }) {
         className="fixed inset-x-0 bottom-0 z-20 flex justify-around border-t border-border bg-white pb-[env(safe-area-inset-bottom)] lg:hidden"
       >
         {[
-          { label: "Home", href: "/", icon: Home },
+          { label: "Home", href: "/dashboard", icon: Home },
           { label: "Create", href: "/studio", icon: Sparkles },
           { label: "Library", href: "/products", icon: Package },
           { label: "More", href: "/more", icon: Menu },

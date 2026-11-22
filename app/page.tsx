@@ -1,13 +1,47 @@
 import Link from 'next/link';
-import { AccountSummary } from '@/components/account-summary';
-import { HomeActivity } from '@/components/home-activity';
-import { HomeStats } from '@/components/home-stats';
-import { WorkspaceShell } from '@/components/workspace-shell';
-import { ArrowUpRight, Sparkles, CalendarDays, Plus, Check, ArrowRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-export default function Page() { return <WorkspaceShell><div className="mb-8 flex flex-wrap items-start justify-between gap-4"><div><p className="mb-2 text-xs font-semibold uppercase tracking-[.16em] text-primary">A fresh start</p><h1 className="text-3xl font-bold tracking-tight">Good things start here.</h1><p className="mt-2 text-muted-foreground">Let’s turn what you sell into something worth sharing.</p></div><span className="text-sm text-muted-foreground">Your business, in focus.</span></div>
-<AccountSummary/><section className="relative overflow-hidden rounded-2xl bg-primary p-7 text-white sm:p-10"><div className="absolute -right-10 -top-20 h-80 w-80 rounded-full border-[45px] border-white/5"/><div className="relative max-w-xl"><span className="mb-5 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs"><Sparkles size={14}/> Your everyday marketing assistant</span><h2 className="text-3xl font-semibold leading-tight sm:text-4xl">You make the products.<br/>Let’s make them stand out.</h2><p className="my-5 max-w-md text-green-100">Save your product details, create a promotion and share it your way. One small step towards your next customer.</p><Button asChild className="bg-white text-primary hover:bg-green-50"><Link href="/studio"><Plus size={18}/>Create promotion<ArrowRight size={16}/></Link></Button></div></section>
-<HomeStats/>
-<HomeActivity/>
-<div className="grid gap-6 md:grid-cols-[1.3fr_1fr]"><section className="card"><div className="flex items-center justify-between"><h2 className="text-lg font-semibold">Make yourself at home</h2><span className="text-xs text-muted-foreground">Getting started</span></div><p className="mt-1 text-sm text-muted-foreground">A few details now. Easier marketing every day.</p><div className="mt-6 space-y-5">{[{ title: 'Tell us about your business', body: 'Your name, brand colour and how customers reach you.', href: '/settings' }, { title: 'Add your first product', body: 'A photo, a description and a confirmed price.', href: '/products' }, { title: 'Create your first promotion', body: 'Choose your goal and make it your own.', href: '/studio' }].map((item, i) => <Link href={item.href} key={item.title} className="flex items-center gap-4"><span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border text-sm text-muted-foreground">{i + 1}</span><span className="flex-1"><span className="block text-sm font-semibold">{item.title}</span><span className="text-xs text-muted-foreground">{item.body}</span></span><ArrowUpRight size={17} className="text-muted-foreground"/></Link>)}</div></section><section className="card flex flex-col"><span className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-green-50 text-primary"><CalendarDays size={22}/></span><h2 className="text-lg font-semibold">A little plan. A whole week.</h2><p className="mt-2 text-sm text-muted-foreground">Bring your products together in a seven-day checklist. You choose when and where to share.</p><p className="my-5 flex items-center gap-2 text-xs text-muted-foreground"><Check size={15} className="text-primary"/>You review every caption before sharing.</p><Button asChild variant="outline" className="mt-auto self-start"><Link href="/planner">Explore your planner<ArrowRight size={16}/></Link></Button></section></div>
-<p className="mt-7 text-center text-xs text-muted-foreground">Made for small businesses with big ideas. You’re always in control of what gets shared.</p></WorkspaceShell>; }
+import { ArrowRight, CalendarDays, FileText, Leaf, Sparkles } from 'lucide-react';
+
+const features = [
+  { icon: Sparkles, title: 'Write a promotion', detail: 'Start with a product and a goal. Edit the suggested caption until it sounds like you.' },
+  { icon: CalendarDays, title: 'Plan your week', detail: 'Organise seven days of Instagram and WhatsApp posts. Review each one before sharing.' },
+  { icon: FileText, title: 'Follow up a sale', detail: 'Turn a customer enquiry into a quotation, issue an invoice and track manual payments.' },
+];
+
+export default function LandingPage() {
+  return (
+    <div className="min-h-screen bg-[#faf8f1] text-[#153b2c]">
+      <header className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-5 py-5 sm:px-10">
+        <Link href="/" className="flex items-center gap-2 text-xl font-bold tracking-tight"><Leaf aria-hidden="true" />MarketMate</Link>
+        <nav aria-label="Account" className="flex items-center gap-4 text-sm font-semibold">
+          <Link href="/login" className="py-3 hover:underline">Sign in</Link>
+          <Link href="/register" className="rounded-full border border-current px-4 py-2">Create account</Link>
+        </nav>
+      </header>
+      <main>
+        <section className="mx-auto grid max-w-7xl items-center gap-10 px-5 py-12 sm:px-10 lg:grid-cols-[1.1fr_1fr] lg:gap-16 lg:py-20">
+          <div>
+            <h1 className="max-w-2xl font-serif text-5xl leading-[1.02] tracking-tight sm:text-7xl">Turn your products into your next post.</h1>
+            <p className="my-6 max-w-lg text-lg leading-relaxed text-[#466053]">MarketMate helps small businesses write captions, design branded graphics and plan a week of promotions from the products they already sell.</p>
+            <Link href="/register" className="inline-flex items-center gap-4 rounded-full bg-[#174d34] px-6 py-3 font-semibold text-white hover:bg-[#103e29]">Create your account <ArrowRight size={18} /></Link>
+          </div>
+          <figure className="rounded-2xl bg-[#e6ead7] p-6 sm:p-10">
+            <div className="mx-auto max-w-sm -rotate-2 rounded-sm bg-[#173f32] p-7 text-[#fff8da] shadow-lg sm:p-9">
+              <div className="flex items-center justify-between border-b border-[#91a58b] pb-4 text-xs font-bold uppercase tracking-widest">Abuja Threads <Leaf size={18} /></div>
+              <p className="mt-8 font-serif text-5xl leading-none sm:text-6xl">The Adire<br /><i className="text-[#dcea96]">Tote.</i></p>
+              <p className="my-5 max-w-52 text-sm">A little indigo for your everyday carry.</p>
+              <div className="flex justify-between gap-3 border-t border-[#91a58b] pt-4 text-sm"><strong>₦10,000</strong><span>Abuja pickup</span></div>
+            </div>
+            <figcaption className="mt-6 text-center text-sm text-[#466053]">Example product promotion</figcaption>
+          </figure>
+        </section>
+        <section aria-label="What you can do with MarketMate" className="border-t border-[#cdd6c8] bg-white">
+          <div className="mx-auto grid max-w-7xl gap-8 px-5 py-12 sm:px-10 md:grid-cols-3">
+            {features.map(({ icon: Icon, title, detail }) => (
+              <article key={title}><Icon aria-hidden="true" className="mb-4 text-primary" /><h2 className="text-xl font-semibold">{title}</h2><p className="mt-2 max-w-sm text-[#466053]">{detail}</p></article>
+            ))}
+          </div>
+        </section>
+      </main>
+    </div>
+  );
+}
