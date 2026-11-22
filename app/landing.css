@@ -1,7 +1,7 @@
 .mm {
-  --ink: #123e30;
-  --paper: #faf9f2;
-  --muted: #4c6256;
+  --ink: var(--color-primary-hover);
+  --paper: var(--color-background);
+  --muted: var(--color-muted-foreground);
   color: var(--ink);
   background: var(--paper);
   font-family: Arial, Helvetica, sans-serif;
@@ -84,7 +84,7 @@
 .mm h1,
 .mm h2 {
   font-weight: 500;
-  letter-spacing: -0.078em;
+  letter-spacing: -0.04em;
   line-height: 1;
   margin: 0;
 }
@@ -95,7 +95,7 @@
 .mm h2 em {
   font-family: Georgia, serif;
   font-weight: 400;
-  letter-spacing: -0.073em;
+  letter-spacing: -0.04em;
   color: #45704e;
 }
 .mm-intro > p {
@@ -117,7 +117,7 @@
   font-weight: 600;
 }
 .mm-primary {
-  background: var(--ink);
+  background: var(--color-primary);
   color: white;
   padding: 15px 20px;
   border-radius: 9px;
@@ -131,7 +131,7 @@
 }
 .mm-primary:hover,
 .mm-nav-action:hover {
-  background: #27563d;
+  background: var(--color-primary-hover);
   color: white;
   transform: translateY(-2px);
 }
@@ -190,15 +190,8 @@
 }
 .mm-print {
   position: absolute;
-  inset: 0 0 0 56%;
-  background-color: #c3d9d0;
-  background-image: repeating-radial-gradient(
-    ellipse at 50% 100%,
-    transparent 0 7%,
-    #163e52 8% 14%,
-    transparent 15% 19%
-  );
-  background-size: 68px 66px;
+  inset: 0 0 0 53%;
+  background: #e8dcc9 url("/images/adire-tote.webp") center / cover no-repeat;
 }
 .mm-poster-copy {
   position: relative;
@@ -238,6 +231,7 @@
 }
 .mm-channels button {
   cursor: pointer;
+  min-height: 44px;
   font-size: 12px;
   color: var(--muted);
   padding: 5px 8px;

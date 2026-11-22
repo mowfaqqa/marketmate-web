@@ -24,7 +24,7 @@ export function HomeStats() {
       .catch(() => setCount(undefined));
   }, []);
   return (
-    <div className="my-6 grid gap-4 sm:grid-cols-3">
+    <div className="my-6 grid divide-y divide-border rounded-xl border border-border bg-white sm:grid-cols-3 sm:divide-x sm:divide-y-0">
       {[
         {
           label: "Active products",
@@ -53,12 +53,14 @@ export function HomeStats() {
           icon: CalendarDays,
         },
       ].map(({ label, value, note, icon: Icon }) => (
-        <div className="card" key={label}>
+        <div className="p-4 sm:p-6" key={label}>
           <div className="flex items-center justify-between text-sm text-muted-foreground">
             {label}
             <Icon size={18} />
           </div>
-          <p className="my-3 text-3xl font-semibold">{value}</p>
+          <p className="my-3 text-3xl font-semibold tabular-nums tracking-tight">
+            {value}
+          </p>
           <p className="text-xs text-muted-foreground">{note}</p>
         </div>
       ))}

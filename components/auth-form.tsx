@@ -83,33 +83,32 @@ export function AuthForm({ mode }: { mode: Mode }) {
     }
   }
   return (
-    <main className="grid min-h-screen lg:grid-cols-2">
-      <section className="hidden flex-col justify-between bg-primary p-12 text-white lg:flex">
-        <Link href="/" className="flex items-center gap-2 text-2xl font-bold">
+    <main className="grid min-h-svh bg-white lg:grid-cols-[minmax(0,.85fr)_minmax(0,1.15fr)]">
+      <aside className="hidden bg-primary-hover text-white lg:flex lg:flex-col lg:p-10">
+        <Link
+          href="/"
+          className="inline-flex min-h-11 w-fit items-center gap-2 text-2xl font-bold tracking-tight"
+        >
           <Leaf />
           MarketMate
         </Link>
-        <div>
-          <p className="mb-6 text-sm text-green-200">CREATE. PROMOTE. SELL.</p>
-          <h1 className="max-w-lg text-5xl font-semibold leading-tight">
-            Small business.
-            <br />
-            Fresh possibilities.
-          </h1>
-          <p className="mt-6 max-w-md text-green-100">
-            Your products, your voice and a little help turning everyday ideas
-            into your next promotion.
-          </p>
-        </div>
-        <p className="text-sm text-green-200">
-          Made for the business you’re building.
+        <div
+          aria-hidden="true"
+          className="my-8 min-h-52 flex-1 rounded-xl bg-[url('/images/adire-tote.webp')] bg-cover bg-[center_66%]"
+        />
+        <p className="text-3xl font-semibold tracking-tight">
+          Small business. Fresh possibilities.
         </p>
-      </section>
+        <p className="mt-3 max-w-md text-green-100">
+          Your products, your voice and a little help turning everyday ideas
+          into your next promotion.
+        </p>
+      </aside>
       <section className="flex items-center justify-center p-6 py-12">
         <div className="w-full max-w-md">
           <Link
             href="/"
-            className="mb-10 inline-flex min-h-11 items-center gap-2 text-sm text-muted-foreground"
+            className="mb-6 inline-flex min-h-11 items-center gap-2 text-sm text-muted-foreground"
           >
             <ArrowLeft size={16} />
             Back to home
@@ -243,7 +242,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
                 </p>
               )}
           </form>
-          <div className="mt-6 flex flex-wrap justify-between gap-3 text-sm text-primary">
+          <div className="mt-6 flex flex-wrap justify-between gap-x-3 border-t border-border pt-3 text-sm font-medium text-primary [&_a]:inline-flex [&_a]:min-h-11 [&_a]:items-center hover:[&_a]:underline">
             {mode === "login" ? (
               <>
                 <Link href="/register">Create an account</Link>

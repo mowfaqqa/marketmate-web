@@ -69,12 +69,7 @@ export function ProductListView() {
     <>
       <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
         <div>
-          <p className="mb-2 text-xs font-semibold uppercase tracking-[.16em] text-primary">
-            Your product library
-          </p>
-          <h1 className="text-3xl font-bold tracking-tight">
-            What you sell. Ready to share.
-          </h1>
+          <h1 className="text-3xl font-bold tracking-tight">Product library</h1>
           <p className="mt-2 max-w-xl text-muted-foreground">
             Keep your products, services and confirmed details in one place.
           </p>
@@ -86,8 +81,8 @@ export function ProductListView() {
           </Link>
         </Button>
       </div>
-      <div className="mb-6 grid gap-4 sm:grid-cols-2">
-        <div className="card flex items-center gap-4">
+      <div className="mb-6 grid divide-y divide-border rounded-xl border border-border bg-white sm:grid-cols-2 sm:divide-x sm:divide-y-0">
+        <div className="flex items-center gap-4 p-4 sm:p-6">
           <span className="rounded-lg bg-green-50 p-3 text-primary">
             <Package size={22} />
           </span>
@@ -95,10 +90,12 @@ export function ProductListView() {
             <p className="text-sm text-muted-foreground">
               Active in your library
             </p>
-            <p className="text-2xl font-semibold">{data?.activeCount ?? "—"}</p>
+            <p className="text-2xl font-semibold tabular-nums">
+              {data?.activeCount ?? "—"}
+            </p>
           </div>
         </div>
-        <div className="card flex items-center gap-4">
+        <div className="flex items-center gap-4 p-4 sm:p-6">
           <span className="rounded-lg bg-slate-50 p-3 text-muted-foreground">
             <Archive size={22} />
           </span>
@@ -106,7 +103,7 @@ export function ProductListView() {
             <p className="text-sm text-muted-foreground">
               Archived for safekeeping
             </p>
-            <p className="text-2xl font-semibold">
+            <p className="text-2xl font-semibold tabular-nums">
               {data?.archivedCount ?? "—"}
             </p>
           </div>

@@ -5,7 +5,6 @@ import { HomeStats } from "@/components/home-stats";
 import { WorkspaceShell } from "@/components/workspace-shell";
 import {
   ArrowUpRight,
-  Sparkles,
   CalendarDays,
   Plus,
   Check,
@@ -15,47 +14,23 @@ import { Button } from "@/components/ui/button";
 export default function Page() {
   return (
     <WorkspaceShell>
-      <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <div>
-          <p className="mb-2 text-xs font-semibold uppercase tracking-[.16em] text-primary">
-            A fresh start
-          </p>
-          <h1 className="text-3xl font-bold tracking-tight">
-            Good things start here.
+          <h1 className="text-[32px] font-semibold leading-tight tracking-tight">
+            Your workspace
           </h1>
           <p className="mt-2 text-muted-foreground">
             Let’s turn what you sell into something worth sharing.
           </p>
         </div>
-        <span className="text-sm text-muted-foreground">
-          Your business, in focus.
-        </span>
+        <Button asChild>
+          <Link href="/studio">
+            <Plus size={18} />
+            Create promotion
+          </Link>
+        </Button>
       </div>
       <AccountSummary />
-      <section className="relative overflow-hidden rounded-2xl bg-primary p-7 text-white sm:p-10">
-        <div className="absolute -right-10 -top-20 h-80 w-80 rounded-full border-[45px] border-white/5" />
-        <div className="relative max-w-xl">
-          <span className="mb-5 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs">
-            <Sparkles size={14} /> Your everyday marketing assistant
-          </span>
-          <h2 className="text-3xl font-semibold leading-tight sm:text-4xl">
-            You make the products.
-            <br />
-            Let’s make them stand out.
-          </h2>
-          <p className="my-5 max-w-md text-green-100">
-            Save your product details, create a promotion and share it your way.
-            One small step towards your next customer.
-          </p>
-          <Button asChild className="bg-white text-primary hover:bg-green-50">
-            <Link href="/studio">
-              <Plus size={18} />
-              Create promotion
-              <ArrowRight size={16} />
-            </Link>
-          </Button>
-        </div>
-      </section>
       <HomeStats />
       <HomeActivity />
       <div className="grid gap-6 md:grid-cols-[1.3fr_1fr]">
@@ -131,10 +106,6 @@ export default function Page() {
           </Button>
         </section>
       </div>
-      <p className="mt-7 text-center text-xs text-muted-foreground">
-        Made for small businesses with big ideas. You’re always in control of
-        what gets shared.
-      </p>
     </WorkspaceShell>
   );
 }

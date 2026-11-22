@@ -25,7 +25,11 @@ export default function CampaignPreview() {
           className="mm-poster"
           aria-label="Example promotion for the Adire Tote"
         >
-          <div className="mm-print" aria-hidden="true" />
+          <div
+            className="mm-print"
+            role="img"
+            aria-label="Indigo and cream patterned Adire tote"
+          />
           <div className="mm-poster-copy">
             <span>Abuja Threads</span>
             <strong>
