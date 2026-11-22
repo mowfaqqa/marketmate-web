@@ -217,9 +217,7 @@ export function ProductEditor({ id }: { id: string }) {
       setDirty(false);
       setNotice("Product details saved.");
       if (id === "new")
-        router.replace(
-          `/products/${saved.id}?returnTo=${encodeURIComponent(returnTo)}`,
-        );
+        router.replace(returnTo);
     } catch (err) {
       failure(err);
     } finally {
