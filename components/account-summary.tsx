@@ -22,7 +22,7 @@ export function AccountSummary() {
   }, []);
   return (
     <section
-      className="card mb-6 flex flex-wrap items-center justify-between gap-4"
+      className="card min-w-0 break-words flex flex-wrap items-center justify-between gap-4"
       aria-label="Account setup"
     >
       <div>
