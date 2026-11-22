@@ -37,10 +37,8 @@ export default function Page() {
   return (
     <WorkspaceShell>
       <div className="space-y-6">
-        <h1 className="text-[32px] font-semibold leading-tight tracking-tight">
-          Marketing workspace
-        </h1>
-        <section className="grid overflow-hidden rounded-xl bg-primary-hover text-white sm:grid-cols-[1.65fr_1fr]">
+        <h1 className="workspace-title">Marketing workspace</h1>
+        <section className="grid overflow-hidden rounded-xl bg-primary-hover text-white sm:grid-cols-[1.6fr_1fr]">
           <div className="p-6 sm:p-8">
             <WandSparkles
               aria-hidden="true"
@@ -65,11 +63,11 @@ export default function Page() {
           </div>
           <div
             aria-hidden="true"
-            className="hidden bg-[url('/images/adire-tote.webp')] bg-cover bg-[center_72%] sm:block"
+            className="order-first h-24 bg-[url('/images/adire-tote.webp')] bg-cover bg-[center_75%] sm:order-last sm:h-auto"
           />
         </section>
         <HomeStats />
-        <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
+        <div className="grid items-start gap-6 md:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
           <HomeActivity />
           <aside className="grid min-w-0 gap-6">
             <section className="overflow-hidden rounded-xl border border-border bg-white">

@@ -7,7 +7,6 @@ import {
   Plus,
   Search,
   ArrowUpRight,
-  Archive,
   BriefcaseBusiness,
 } from "lucide-react";
 import { api, ApiError } from "@/lib/api";
@@ -69,7 +68,7 @@ export function ProductListView() {
     <>
       <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Product library</h1>
+          <h1 className="workspace-title">Product library</h1>
           <p className="mt-2 max-w-xl text-muted-foreground">
             Keep your products, services and confirmed details in one place.
           </p>
@@ -81,35 +80,7 @@ export function ProductListView() {
           </Link>
         </Button>
       </div>
-      <div className="mb-6 grid divide-y divide-border rounded-xl border border-border bg-white sm:grid-cols-2 sm:divide-x sm:divide-y-0">
-        <div className="flex items-center gap-4 p-4 sm:p-6">
-          <span className="rounded-lg bg-green-50 p-3 text-primary">
-            <Package size={22} />
-          </span>
-          <div>
-            <p className="text-sm text-muted-foreground">
-              Active in your library
-            </p>
-            <p className="text-2xl font-semibold tabular-nums">
-              {data?.activeCount ?? "—"}
-            </p>
-          </div>
-        </div>
-        <div className="flex items-center gap-4 p-4 sm:p-6">
-          <span className="rounded-lg bg-slate-50 p-3 text-muted-foreground">
-            <Archive size={22} />
-          </span>
-          <div>
-            <p className="text-sm text-muted-foreground">
-              Archived for safekeeping
-            </p>
-            <p className="text-2xl font-semibold tabular-nums">
-              {data?.archivedCount ?? "—"}
-            </p>
-          </div>
-        </div>
-      </div>
-      <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+      <div className="card mb-6 flex flex-wrap items-end justify-between gap-4">
         <nav aria-label="Product status" className="flex gap-2">
           {["active", "archived"].map((value) => (
             <Link
@@ -118,7 +89,12 @@ export function ProductListView() {
               aria-current={status === value ? "page" : undefined}
               className={`inline-flex min-h-11 items-center rounded-lg px-4 text-sm font-medium capitalize ${status === value ? "bg-primary text-white" : "border border-border bg-white text-muted-foreground"}`}
             >
-              {value}
+              {value}{" "}
+              <span className="ml-2 rounded bg-black/10 px-1.5 tabular-nums">
+                {(value === "active"
+                  ? data?.activeCount
+                  : data?.archivedCount) ?? "—"}
+              </span>
             </Link>
           ))}
         </nav>

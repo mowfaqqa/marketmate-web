@@ -1,5 +1,6 @@
 "use client";
 import { useAutosave } from "@/hooks/use-autosave";
+import { FolderOpen, SlidersHorizontal } from "lucide-react";
 import { SharePromotion } from "@/components/share-promotion";
 
 import { useCallback, useEffect, useState } from "react";
@@ -179,11 +180,14 @@ function StudioWorkspace() {
     },
   });
   return (
-    <div className="mx-auto max-w-4xl space-y-6">
+    <div className="space-y-6">
       <header>
-        <h1 className="text-3xl font-semibold">Marketing Studio</h1>
+        <h1 className="workspace-title">Marketing Studio</h1>
+        <p className="mt-2 text-muted-foreground">
+          Write a promotion, review its facts and prepare it for sharing.
+        </p>
         {overview && (
-          <p className="mt-2 text-sm text-slate-600">
+          <p className="mt-4 inline-block rounded-lg bg-green-50 px-3 py-2 text-sm font-medium text-primary-hover">
             {overview.usage.remaining} units available · {overview.usage.used}{" "}
             used · {overview.usage.reserved} reserved · Resets{" "}
             {new Date(overview.usage.end).toLocaleDateString("en-NG", {
@@ -211,159 +215,201 @@ function StudioWorkspace() {
           OpenAI. Review every draft before sharing.
         </p>
       )}
-      <section className="space-y-4 rounded-xl border bg-white p-5">
-        <h2 className="text-lg font-semibold">Promotion brief</h2>
-        <fieldset
-          disabled={busy}
-          className="grid gap-4 sm:grid-cols-2"
-          onChange={() => {
-            setPreview(undefined);
-            setKey("");
-            setSourceDraftId(undefined);
-          }}
-        >
-          <label className="grid gap-1">
-            Product
-            <select
-              className="rounded border p-2"
-              value={productId}
-              onChange={(e) => setProductId(e.target.value)}
-            >
-              {!products.length && (
-                <option value="">Add an active product first</option>
-              )}
-              {products.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.name}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="grid gap-1">
-            Goal
-            <select
-              className="rounded border p-2"
-              value={goal}
-              onChange={(e) => setGoal(e.target.value)}
-            >
-              {Object.entries(goals).map(([value, label]) => (
-                <option key={value} value={value}>
-                  {label}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="grid gap-1">
-            Output
-            <select
-              className="rounded border p-2"
-              value={channel}
-              onChange={(e) => setChannel(e.target.value)}
-            >
-              {Object.entries(channels).map(([value, label]) => (
-                <option key={value} value={value}>
-                  {label}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="grid gap-1">
-            Tone
-            <select
-              className="rounded border p-2"
-              value={tone}
-              onChange={(e) => setTone(e.target.value)}
-            >
-              {["friendly", "professional", "energetic"].map((value) => (
-                <option key={value}>{value}</option>
-              ))}
-            </select>
-          </label>
-        </fieldset>
-        <Button
-          disabled={busy || !productId}
-          onClick={() =>
-            void action(async () => {
-              const nextKey = crypto.randomUUID();
-              setPreview(
-                await post<Facts>("/studio/preview", {
-                  ...brief,
-                  key: nextKey,
-                  manual: true,
-                }),
-              );
-              setKey(nextKey);
-            })
-          }
-        >
-          Review facts
-        </Button>
-        {preview && (
-          <div className="space-y-3 rounded-lg bg-slate-50 p-4">
-            <p className="font-medium">
-              {preview.product} · {preview.brand}
-            </p>
-            <p>
-              {preview.price === null
-                ? "Price on request"
-                : money(preview.price)}{" "}
-              · {preview.contact}
-            </p>
-            {preview.expires && (
-              <p>
-                Offer ends{" "}
-                {new Date(preview.expires).toLocaleString("en-NG", {
-                  timeZone: "Africa/Lagos",
-                })}{" "}
-                (Lagos time)
+      <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
+        <section className="card min-w-0 space-y-5">
+          <h2 className="workspace-panel-title">
+            <SlidersHorizontal size={20} />
+            Promotion brief
+          </h2>
+          <fieldset
+            disabled={busy}
+            className="grid gap-4 sm:grid-cols-2"
+            onChange={() => {
+              setPreview(undefined);
+              setKey("");
+              setSourceDraftId(undefined);
+            }}
+          >
+            <label className="field">
+              Product
+              <select
+                className="rounded border p-2"
+                value={productId}
+                onChange={(e) => setProductId(e.target.value)}
+              >
+                {!products.length && (
+                  <option value="">Add an active product first</option>
+                )}
+                {products.map((item) => (
+                  <option key={item.id} value={item.id}>
+                    {item.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="field">
+              Goal
+              <select
+                className="rounded border p-2"
+                value={goal}
+                onChange={(e) => setGoal(e.target.value)}
+              >
+                {Object.entries(goals).map(([value, label]) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="field">
+              Output
+              <select
+                className="rounded border p-2"
+                value={channel}
+                onChange={(e) => setChannel(e.target.value)}
+              >
+                {Object.entries(channels).map(([value, label]) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="field">
+              Tone
+              <select
+                className="rounded border p-2"
+                value={tone}
+                onChange={(e) => setTone(e.target.value)}
+              >
+                {["friendly", "professional", "energetic"].map((value) => (
+                  <option key={value}>{value}</option>
+                ))}
+              </select>
+            </label>
+          </fieldset>
+          <Button
+            disabled={busy || !productId}
+            onClick={() =>
+              void action(async () => {
+                const nextKey = crypto.randomUUID();
+                setPreview(
+                  await post<Facts>("/studio/preview", {
+                    ...brief,
+                    key: nextKey,
+                    manual: true,
+                  }),
+                );
+                setKey(nextKey);
+              })
+            }
+          >
+            Review facts
+          </Button>
+          {preview && (
+            <div className="space-y-3 rounded-lg bg-slate-50 p-4">
+              <p className="font-medium">
+                {preview.product} · {preview.brand}
               </p>
-            )}
-            <div className="flex flex-wrap gap-2">
-              {(sourceDraftId ? [true] : [true, false]).map(
-                (manual) =>
-                  (manual || overview?.usage.generationEnabled) && (
-                    <Button
-                      key={String(manual)}
-                      disabled={busy || !key}
-                      onClick={() =>
-                        void action(async () => {
-                          const started = await post<Job>("/studio", {
-                            ...brief,
-                            key,
-                            manual,
-                            productVersion: preview.productVersion,
-                            businessVersion: preview.businessVersion,
-                            sourceDraftId,
-                          });
-                          setJob(await api<Job>(`/studio/${started.id}`));
-                          setKey("");
-                          setSourceDraftId(undefined);
-                          setPreview(undefined);
-                          await refresh();
-                        })
-                      }
-                    >
-                      {manual
-                        ? sourceDraftId
-                          ? "Duplicate draft · 0 units"
-                          : "Start manual draft · 0 units"
-                        : overview?.usage.localEnabled
-                          ? "Generate local samples · 1 unit"
-                          : "Generate with AI · 1 unit"}
-                    </Button>
-                  ),
+              <p>
+                {preview.price === null
+                  ? "Price on request"
+                  : money(preview.price)}{" "}
+                · {preview.contact}
+              </p>
+              {preview.expires && (
+                <p>
+                  Offer ends{" "}
+                  {new Date(preview.expires).toLocaleString("en-NG", {
+                    timeZone: "Africa/Lagos",
+                  })}{" "}
+                  (Lagos time)
+                </p>
+              )}
+              <div className="flex flex-wrap gap-2">
+                {(sourceDraftId ? [true] : [true, false]).map(
+                  (manual) =>
+                    (manual || overview?.usage.generationEnabled) && (
+                      <Button
+                        key={String(manual)}
+                        disabled={busy || !key}
+                        onClick={() =>
+                          void action(async () => {
+                            const started = await post<Job>("/studio", {
+                              ...brief,
+                              key,
+                              manual,
+                              productVersion: preview.productVersion,
+                              businessVersion: preview.businessVersion,
+                              sourceDraftId,
+                            });
+                            setJob(await api<Job>(`/studio/${started.id}`));
+                            setKey("");
+                            setSourceDraftId(undefined);
+                            setPreview(undefined);
+                            await refresh();
+                          })
+                        }
+                      >
+                        {manual
+                          ? sourceDraftId
+                            ? "Duplicate draft · 0 units"
+                            : "Start manual draft · 0 units"
+                          : overview?.usage.localEnabled
+                            ? "Generate local samples · 1 unit"
+                            : "Generate with AI · 1 unit"}
+                      </Button>
+                    ),
+                )}
+              </div>
+              {!overview?.usage.generationEnabled && (
+                <p className="text-sm text-slate-600">
+                  Generation is unavailable. You can write a manual draft.
+                </p>
               )}
             </div>
-            {!overview?.usage.generationEnabled && (
-              <p className="text-sm text-slate-600">
-                Generation is unavailable. You can write a manual draft.
-              </p>
-            )}
-          </div>
-        )}
-      </section>
+          )}
+        </section>
+        <section className="card min-w-0 space-y-2">
+          <h2 className="workspace-panel-title">
+            <FolderOpen size={20} />
+            Saved work
+          </h2>
+          {overview && !overview.jobs.length && (
+            <p className="py-3 text-sm text-muted-foreground">
+              Your promotions will appear here after you start a draft.
+            </p>
+          )}
+          {overview?.jobs.map((item) => (
+            <button
+              className="block w-full min-h-11 break-words rounded-lg border border-border bg-white p-3 text-left text-sm hover:bg-background focus-visible:bg-background"
+              disabled={busy}
+              key={item.id}
+              onClick={() =>
+                void action(async () => {
+                  if (
+                    changedDraft &&
+                    !confirm("Open saved work? Copy any unsaved text first.")
+                  )
+                    return;
+                  setJob(await api<Job>(`/studio/${item.id}`));
+                  setAutosaveConflict(false);
+                })
+              }
+            >
+              <strong className="block mb-1 text-base">
+                {item.facts.product}
+              </strong>
+              {channels[item.facts.channel as keyof typeof channels]} ·{" "}
+              {goals[item.facts.goal as keyof typeof goals]} ·{" "}
+              {new Date(item.createdAt).toLocaleDateString("en-NG")} ·{" "}
+              {item.archived ? "Archived" : item.status}
+            </button>
+          ))}
+        </section>
+      </div>
       {job && (
-        <section className="space-y-4 rounded-xl border bg-white p-5">
+        <section className="card space-y-4">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <h2 className="text-lg font-semibold">
               {job.facts.product} drafts
@@ -556,33 +602,6 @@ function StudioWorkspace() {
           })}
         </section>
       )}
-      <section className="space-y-2">
-        <h2 className="text-lg font-semibold">Saved work</h2>
-        {overview?.jobs.map((item) => (
-          <button
-            className="block w-full rounded border bg-white p-3 text-left"
-            disabled={busy}
-            key={item.id}
-            onClick={() =>
-              void action(async () => {
-                if (
-                  changedDraft &&
-                  !confirm("Open saved work? Copy any unsaved text first.")
-                )
-                  return;
-                setJob(await api<Job>(`/studio/${item.id}`));
-                setAutosaveConflict(false);
-              })
-            }
-          >
-            {item.facts.product} ·{" "}
-            {channels[item.facts.channel as keyof typeof channels]} ·{" "}
-            {goals[item.facts.goal as keyof typeof goals]} ·{" "}
-            {new Date(item.createdAt).toLocaleDateString("en-NG")} ·{" "}
-            {item.archived ? "Archived" : item.status}
-          </button>
-        ))}
-      </section>
     </div>
   );
 }

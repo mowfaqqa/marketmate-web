@@ -4,7 +4,7 @@
   --color-primary-hover: #14532d;
   --color-focus: #2563eb;
   --color-surface: #fff;
-  --color-background: var(--color-background);
+  --color-background: #f8fafc;
   --color-foreground: #111827;
   --color-muted-foreground: #475569;
   --color-border: #cbd5e1;
@@ -89,5 +89,33 @@ a {
   .field select,
   .field textarea {
     font-size: 16px;
+  }
+}
+
+@layer components {
+  .workspace-title {
+    font-size: clamp(1.65rem, 3vw, 2rem);
+    line-height: 1.15;
+    font-weight: 650;
+    letter-spacing: -0.035em;
+  }
+  .workspace-panel-title {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    font-size: 1.25rem;
+    line-height: 1.4;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+  }
+  .workspace-panel-title svg {
+    flex: none;
+    color: var(--color-primary);
+  }
+  .workspace-notice {
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: var(--color-green-50);
+    color: var(--color-primary-hover);
   }
 }

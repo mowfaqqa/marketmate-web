@@ -36,30 +36,30 @@ export function WorkspaceShell({ children }: { children: React.ReactNode }) {
       >
         Skip to content
       </a>
-      <aside className="fixed inset-y-0 left-0 hidden w-64 flex-col border-r border-border bg-white p-6 lg:flex">
+      <aside className="fixed inset-y-0 left-0 hidden w-64 flex-col bg-primary-hover text-white px-4 py-6 lg:flex">
         <Link
           href="/dashboard"
-          className="flex items-center min-h-11 gap-2 text-2xl font-bold tracking-tight"
+          className="flex items-center min-h-11 gap-2 px-2 text-2xl font-bold tracking-tight"
         >
-          <span className="rounded-lg bg-primary p-2 text-white">
+          <span className="rounded-lg bg-white p-2 text-primary-hover">
             <Leaf size={22} />
           </span>
           MarketMate
         </Link>
-        <p className="mb-10 mt-2 pl-11 text-xs text-muted-foreground">
+        <p className="mb-8 mt-1 pl-14 text-xs text-green-100">
           Create. Promote. Sell.
         </p>
 
         <nav
           aria-label="Main navigation"
-          className="space-y-1 border-t border-border pt-4"
+          className="space-y-1 border-t border-white/20 pt-5"
         >
           {navigation.map(({ label, href, icon: Icon }) => (
             <Link
               key={href}
               href={href}
               aria-current={selected(href) ? "page" : undefined}
-              className={`flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm ${selected(href) ? "bg-green-50 font-semibold text-primary" : "text-muted-foreground hover:bg-slate-50"}`}
+              className={`flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm ${selected(href) ? "bg-white font-semibold text-primary-hover" : "text-green-50 hover:bg-white/10"}`}
             >
               <Icon size={19} />
               {label}
@@ -84,7 +84,7 @@ export function WorkspaceShell({ children }: { children: React.ReactNode }) {
       </header>
       <main
         id="main-content"
-        className="mx-auto max-w-6xl px-5 py-8 pb-28 lg:px-10"
+        className="mx-auto max-w-7xl px-4 sm:px-6 py-8 pb-28 lg:px-10"
       >
         {children}
       </main>
