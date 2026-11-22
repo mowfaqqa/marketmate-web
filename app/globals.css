@@ -1,5 +1,66 @@
 @import "tailwindcss";
-@theme { --color-primary: #166534; --color-background: #f8fafc; --color-foreground: #111827; --color-muted-foreground: #475569; --color-border: #cbd5e1; }
-* { box-sizing: border-box; } body { margin: 0; background: #f8fafc; color: #111827; font-family: Arial, Helvetica, sans-serif; font-size: 16px; line-height: 1.5; } a { text-decoration: none; } button, input, select, textarea { font: inherit; } button, a { -webkit-tap-highlight-color: transparent; } :focus-visible { outline: 2px solid #2563eb; outline-offset: 3px; } .card { background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px; } @media(prefers-reduced-motion:reduce) { * { transition: none !important; } }
+@theme {
+  --color-primary: #166534;
+  --color-background: #f8fafc;
+  --color-foreground: #111827;
+  --color-muted-foreground: #475569;
+  --color-border: #cbd5e1;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: #f8fafc;
+  color: #111827;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+}
+a {
+  text-decoration: none;
+}
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 3px;
+}
+.card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 24px;
+}
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}
 
-.field { display: flex; flex-direction: column; gap: 8px; font-size: 14px; font-weight: 500; } .field input, .field textarea, .field select { min-height: 44px; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px 12px; background: white; color: #111827; width: 100%; }
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+}
+.field input,
+.field textarea,
+.field select {
+  min-height: 44px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 10px 12px;
+  background: white;
+  color: #111827;
+  width: 100%;
+}

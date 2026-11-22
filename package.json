@@ -6,25 +6,28 @@
     "build": "next build --webpack",
     "start": "next start",
     "check": "tsc --noEmit",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "check:deps": "node scripts/check-dependencies.mjs"
   },
   "dependencies": {
+    "@radix-ui/react-slot": "^1.2.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.468.0",
     "next": "^16.0.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "lucide-react": "^0.468.0",
-    "clsx": "^2.1.1",
-    "tailwind-merge": "^3.2.0",
-    "class-variance-authority": "^0.7.1",
-    "@radix-ui/react-slot": "^1.2.0"
+    "tailwind-merge": "^3.2.0"
   },
   "devDependencies": {
-    "typescript": "^5.8.3",
+    "@tailwindcss/postcss": "^4.1.0",
     "@types/node": "^22.15.0",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
+    "prettier": "3.10.1",
     "tailwindcss": "^4.1.0",
-    "@tailwindcss/postcss": "^4.1.0"
+    "typescript": "^5.8.3"
   },
   "packageManager": "pnpm@10.18.2"
 }

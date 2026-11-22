@@ -1,38 +1,373 @@
 "use client";
-import { WorkspaceShell } from '@/components/workspace-shell';
-import { BusinessLogo } from '@/components/business-logo';
-import { useAutosave } from '@/hooks/use-autosave';
-import Link from 'next/link';
-import { useCallback, useEffect, useState, useRef, type FormEvent } from 'react';
-import { useRouter } from 'next/navigation';
-import { ArrowLeft, Check, LogOut } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { api, ApiError, type Account, type Business } from '@/lib/api';
+import { WorkspaceShell } from "@/components/workspace-shell";
+import { BusinessLogo } from "@/components/business-logo";
+import { useAutosave } from "@/hooks/use-autosave";
+import Link from "next/link";
+import {
+  useCallback,
+  useEffect,
+  useState,
+  useRef,
+  type FormEvent,
+} from "react";
+import { useRouter } from "next/navigation";
+import { ArrowLeft, Check, LogOut } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { api, ApiError, type Account, type Business } from "@/lib/api";
 export default function Settings() {
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
   const [account, setAccount] = useState<Account>();
   const [business, setBusiness] = useState<Business>();
-  const [error, setError] = useState('');
-  const [notice, setNotice] = useState('');
+  const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
   const [logoBusy, setLogoBusy] = useState(false);
   const [saving, setSaving] = useState(false);
   const [dirty, setDirty] = useState(false);
   const [conflict, setConflict] = useState(false);
-  const online = useAutosave({ dirty, revision: JSON.stringify(business), blocked: saving || logoBusy || conflict || !!error, save: () => { if (formRef.current?.checkValidity()) formRef.current.requestSubmit(); }, reconnect: () => { if (!conflict) setError(''); } });
+  const online = useAutosave({
+    dirty,
+    revision: JSON.stringify(business),
+    blocked: saving || logoBusy || conflict || !!error,
+    save: () => {
+      if (formRef.current?.checkValidity()) formRef.current.requestSubmit();
+    },
+    reconnect: () => {
+      if (!conflict) setError("");
+    },
+  });
   const load = useCallback(async () => {
-    try { const data = await api<Account>('/auth/me'); setAccount(data); setBusiness(data.business); setDirty(false); setConflict(false); setError(''); }
-    catch (err) { if (err instanceof ApiError && err.status === 401) router.replace('/login'); else setError(err instanceof Error ? err.message : 'Unable to load your business.'); }
+    try {
+      const data = await api<Account>("/auth/me");
+      setAccount(data);
+      setBusiness(data.business);
+      setDirty(false);
+      setConflict(false);
+      setError("");
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 401)
+        router.replace("/login");
+      else
+        setError(
+          err instanceof Error ? err.message : "Unable to load your business.",
+        );
+    }
   }, [router]);
-  useEffect(() => { void load(); }, [load]);
-  useEffect(() => { function warn(event: BeforeUnloadEvent) { if (dirty) { event.preventDefault(); event.returnValue = ''; } } window.addEventListener('beforeunload', warn); return () => window.removeEventListener('beforeunload', warn); }, [dirty]);
-  function update(key: keyof Business, value: string) { setBusiness(current => current ? { ...current, [key]: value } : current); setDirty(true); setNotice(''); if (!conflict) setError(''); }
-  async function save(event: FormEvent) {
-    event.preventDefault(); if (!business) return; setSaving(true); setError(''); setNotice('');
-    const { name, category, description, location, contact, language, tone, brandColor, version } = business;
-    try { const saved = await api<Business>('/business', { method: 'PUT', body: JSON.stringify({ name: name.trim(), category: category.trim(), description, location, contact: contact?.trim(), language, tone, brandColor, version }) }); setBusiness(saved); setDirty(false); setNotice('Business details saved.'); }
-    catch (err) { setError(err instanceof Error ? err.message : 'Save failed. Your changes are still in this form.'); setConflict(err instanceof ApiError && err.status === 409); } finally { setSaving(false); }
+  useEffect(() => {
+    void load();
+  }, [load]);
+  useEffect(() => {
+    function warn(event: BeforeUnloadEvent) {
+      if (dirty) {
+        event.preventDefault();
+        event.returnValue = "";
+      }
+    }
+    window.addEventListener("beforeunload", warn);
+    return () => window.removeEventListener("beforeunload", warn);
+  }, [dirty]);
+  function update(key: keyof Business, value: string) {
+    setBusiness((current) =>
+      current ? { ...current, [key]: value } : current,
+    );
+    setDirty(true);
+    setNotice("");
+    if (!conflict) setError("");
   }
-  async function action(path: string) { setError(''); try { const result = await api<{ message: string }>(path, { method: 'POST' }); setNotice(result.message); if (path.endsWith('logout')) router.push('/login'); } catch (err) { setError(err instanceof Error ? err.message : 'Please try again.'); } }
-  return <WorkspaceShell><div className="mx-auto max-w-4xl"><header className="mb-8 flex flex-wrap items-center justify-between gap-4"><Link href="/dashboard" className="flex min-h-11 items-center gap-2 text-sm text-primary" onClick={event => { if (dirty && !confirm('Leave without saving your changes?')) event.preventDefault(); }}><ArrowLeft size={16}/>Back to workspace</Link><Button variant="outline" onClick={() => { if (!dirty || confirm('Sign out without saving your changes?')) void action('/auth/logout'); }}><LogOut size={16}/>Sign out</Button></header><h1 className="text-3xl font-semibold">Your business, in your own words.</h1><p className="mb-8 mt-3 text-muted-foreground">These are the facts your marketing will start from. You can update them anytime.</p>{error && <div role="alert" className="mb-5 rounded-lg bg-red-50 p-4 text-red-800">{error}{!account && <Button variant="outline" onClick={() => void load()}>Retry</Button>}</div>}{notice && <p role="status" className="mb-5 rounded-lg bg-green-50 p-4 text-primary">{notice}</p>}{!business ? <p role="status">Loading your business…</p> : <><section className="card mb-6 flex flex-wrap items-center justify-between gap-4"><div><p className="font-semibold">{account?.email}</p><p className="text-sm text-muted-foreground">{account?.verified ? 'Email verified' : 'Verify your email before using AI generation.'}</p></div>{account?.verified ? <Check className="text-primary"/> : <Button variant="outline" onClick={() => void action('/auth/resend-verification')}>Resend verification email</Button>}</section><BusinessLogo business={business} disabled={dirty || saving || conflict} onSaved={setBusiness} onBusy={setLogoBusy} /><form ref={formRef} onSubmit={save} className="card"><fieldset disabled={saving || logoBusy} className="space-y-6"><h2 className="text-xl font-semibold">Business profile</h2><div className="grid gap-5 sm:grid-cols-2"><label className="field">Business name<input required minLength={2} maxLength={100} value={business.name} onChange={e => update('name', e.target.value)} placeholder="What do your customers call you?"/></label><label className="field">Business category<input required minLength={2} maxLength={80} value={business.category} onChange={e => update('category', e.target.value)} placeholder="For example, clothing or catering"/></label></div><label className="field">Short description<textarea maxLength={500} rows={3} value={business.description} onChange={e => update('description', e.target.value)} placeholder="What do you offer? Keep it factual."/></label><label className="field">Location or service area<input maxLength={150} value={business.location} onChange={e => update('location', e.target.value)} placeholder="Only the places you actually serve"/></label><label className="field">How customers reach you<input required maxLength={300} value={business.contact || ''} onChange={e => update('contact', e.target.value)} placeholder="https://yourbusiness.com or +2348012345678"/><span className="text-xs font-normal text-muted-foreground">Use an HTTPS link or an international phone number, without spaces.</span></label><div className="grid gap-5 sm:grid-cols-2"><label className="field">Your tone<select value={business.tone} onChange={e => update('tone', e.target.value)}><option value="friendly">Friendly</option><option value="professional">Professional</option><option value="playful">Playful</option></select></label><label className="field">Brand colour<input type="color" className="w-full" value={business.brandColor} onChange={e => update('brandColor', e.target.value)}/></label></div><p className="text-sm text-muted-foreground">Nigerian English · NGN · Africa/Lagos</p><div className="rounded-lg bg-slate-50 p-4"><h3 className="text-sm font-semibold">Your saved facts will guide new promotions</h3><p className="mt-1 text-sm text-muted-foreground">Business name, category, description, service area, contact, tone and colour. Existing approved content keeps its original snapshot.</p></div>{conflict && <div className="flex flex-wrap gap-3"><Button type="button" variant="outline" onClick={async () => { try { await navigator.clipboard.writeText(JSON.stringify(business, null, 2)); setNotice('Your current text was copied. Reload when you are ready.'); } catch { setError('Copy failed. Keep this tab open and copy your text manually.'); } }}>Copy my current text</Button><Button type="button" variant="outline" onClick={() => { if (confirm('Replace this form with the latest saved details? Copy your changes first if needed.')) void load(); }}>Reload saved details</Button></div>}<div className="flex flex-wrap items-center justify-between gap-4 border-t border-border pt-5"><p role="status" className="text-sm text-muted-foreground">{saving ? 'Saving…' : dirty ? (online ? 'Unsaved changes · autosave pending' : 'Offline · changes remain in this tab') : business.version ? `Saved ${new Date(business.updatedAt).toLocaleString('en-NG', { timeZone: 'Africa/Lagos' })}` : 'Complete your profile to get started.'}</p><Button disabled={saving || conflict || !dirty}>{saving ? 'Saving…' : 'Save business details'}</Button></div></fieldset></form></>}</div></WorkspaceShell>;
+  async function save(event: FormEvent) {
+    event.preventDefault();
+    if (!business) return;
+    setSaving(true);
+    setError("");
+    setNotice("");
+    const {
+      name,
+      category,
+      description,
+      location,
+      contact,
+      language,
+      tone,
+      brandColor,
+      version,
+    } = business;
+    try {
+      const saved = await api<Business>("/business", {
+        method: "PUT",
+        body: JSON.stringify({
+          name: name.trim(),
+          category: category.trim(),
+          description,
+          location,
+          contact: contact?.trim(),
+          language,
+          tone,
+          brandColor,
+          version,
+        }),
+      });
+      setBusiness(saved);
+      setDirty(false);
+      setNotice("Business details saved.");
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Save failed. Your changes are still in this form.",
+      );
+      setConflict(err instanceof ApiError && err.status === 409);
+    } finally {
+      setSaving(false);
+    }
+  }
+  async function action(path: string) {
+    setError("");
+    try {
+      const result = await api<{ message: string }>(path, { method: "POST" });
+      setNotice(result.message);
+      if (path.endsWith("logout")) router.push("/login");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Please try again.");
+    }
+  }
+  return (
+    <WorkspaceShell>
+      <div className="mx-auto max-w-4xl">
+        <header className="mb-8 flex flex-wrap items-center justify-between gap-4">
+          <Link
+            href="/dashboard"
+            className="flex min-h-11 items-center gap-2 text-sm text-primary"
+            onClick={(event) => {
+              if (dirty && !confirm("Leave without saving your changes?"))
+                event.preventDefault();
+            }}
+          >
+            <ArrowLeft size={16} />
+            Back to workspace
+          </Link>
+          <Button
+            variant="outline"
+            onClick={() => {
+              if (!dirty || confirm("Sign out without saving your changes?"))
+                void action("/auth/logout");
+            }}
+          >
+            <LogOut size={16} />
+            Sign out
+          </Button>
+        </header>
+        <h1 className="text-3xl font-semibold">
+          Your business, in your own words.
+        </h1>
+        <p className="mb-8 mt-3 text-muted-foreground">
+          These are the facts your marketing will start from. You can update
+          them anytime.
+        </p>
+        {error && (
+          <div
+            role="alert"
+            className="mb-5 rounded-lg bg-red-50 p-4 text-red-800"
+          >
+            {error}
+            {!account && (
+              <Button variant="outline" onClick={() => void load()}>
+                Retry
+              </Button>
+            )}
+          </div>
+        )}
+        {notice && (
+          <p
+            role="status"
+            className="mb-5 rounded-lg bg-green-50 p-4 text-primary"
+          >
+            {notice}
+          </p>
+        )}
+        {!business ? (
+          <p role="status">Loading your business…</p>
+        ) : (
+          <>
+            <section className="card mb-6 flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <p className="font-semibold">{account?.email}</p>
+                <p className="text-sm text-muted-foreground">
+                  {account?.verified
+                    ? "Email verified"
+                    : "Verify your email before using AI generation."}
+                </p>
+              </div>
+              {account?.verified ? (
+                <Check className="text-primary" />
+              ) : (
+                <Button
+                  variant="outline"
+                  onClick={() => void action("/auth/resend-verification")}
+                >
+                  Resend verification email
+                </Button>
+              )}
+            </section>
+            <BusinessLogo
+              business={business}
+              disabled={dirty || saving || conflict}
+              onSaved={setBusiness}
+              onBusy={setLogoBusy}
+            />
+            <form ref={formRef} onSubmit={save} className="card">
+              <fieldset disabled={saving || logoBusy} className="space-y-6">
+                <h2 className="text-xl font-semibold">Business profile</h2>
+                <div className="grid gap-5 sm:grid-cols-2">
+                  <label className="field">
+                    Business name
+                    <input
+                      required
+                      minLength={2}
+                      maxLength={100}
+                      value={business.name}
+                      onChange={(e) => update("name", e.target.value)}
+                      placeholder="What do your customers call you?"
+                    />
+                  </label>
+                  <label className="field">
+                    Business category
+                    <input
+                      required
+                      minLength={2}
+                      maxLength={80}
+                      value={business.category}
+                      onChange={(e) => update("category", e.target.value)}
+                      placeholder="For example, clothing or catering"
+                    />
+                  </label>
+                </div>
+                <label className="field">
+                  Short description
+                  <textarea
+                    maxLength={500}
+                    rows={3}
+                    value={business.description}
+                    onChange={(e) => update("description", e.target.value)}
+                    placeholder="What do you offer? Keep it factual."
+                  />
+                </label>
+                <label className="field">
+                  Location or service area
+                  <input
+                    maxLength={150}
+                    value={business.location}
+                    onChange={(e) => update("location", e.target.value)}
+                    placeholder="Only the places you actually serve"
+                  />
+                </label>
+                <label className="field">
+                  How customers reach you
+                  <input
+                    required
+                    maxLength={300}
+                    value={business.contact || ""}
+                    onChange={(e) => update("contact", e.target.value)}
+                    placeholder="https://yourbusiness.com or +2348012345678"
+                  />
+                  <span className="text-xs font-normal text-muted-foreground">
+                    Use an HTTPS link or an international phone number, without
+                    spaces.
+                  </span>
+                </label>
+                <div className="grid gap-5 sm:grid-cols-2">
+                  <label className="field">
+                    Your tone
+                    <select
+                      value={business.tone}
+                      onChange={(e) => update("tone", e.target.value)}
+                    >
+                      <option value="friendly">Friendly</option>
+                      <option value="professional">Professional</option>
+                      <option value="playful">Playful</option>
+                    </select>
+                  </label>
+                  <label className="field">
+                    Brand colour
+                    <input
+                      type="color"
+                      className="w-full"
+                      value={business.brandColor}
+                      onChange={(e) => update("brandColor", e.target.value)}
+                    />
+                  </label>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Nigerian English · NGN · Africa/Lagos
+                </p>
+                <div className="rounded-lg bg-slate-50 p-4">
+                  <h3 className="text-sm font-semibold">
+                    Your saved facts will guide new promotions
+                  </h3>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Business name, category, description, service area, contact,
+                    tone and colour. Existing approved content keeps its
+                    original snapshot.
+                  </p>
+                </div>
+                {conflict && (
+                  <div className="flex flex-wrap gap-3">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={async () => {
+                        try {
+                          await navigator.clipboard.writeText(
+                            JSON.stringify(business, null, 2),
+                          );
+                          setNotice(
+                            "Your current text was copied. Reload when you are ready.",
+                          );
+                        } catch {
+                          setError(
+                            "Copy failed. Keep this tab open and copy your text manually.",
+                          );
+                        }
+                      }}
+                    >
+                      Copy my current text
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => {
+                        if (
+                          confirm(
+                            "Replace this form with the latest saved details? Copy your changes first if needed.",
+                          )
+                        )
+                          void load();
+                      }}
+                    >
+                      Reload saved details
+                    </Button>
+                  </div>
+                )}
+                <div className="flex flex-wrap items-center justify-between gap-4 border-t border-border pt-5">
+                  <p role="status" className="text-sm text-muted-foreground">
+                    {saving
+                      ? "Saving…"
+                      : dirty
+                        ? online
+                          ? "Unsaved changes · autosave pending"
+                          : "Offline · changes remain in this tab"
+                        : business.version
+                          ? `Saved ${new Date(business.updatedAt).toLocaleString("en-NG", { timeZone: "Africa/Lagos" })}`
+                          : "Complete your profile to get started."}
+                  </p>
+                  <Button disabled={saving || conflict || !dirty}>
+                    {saving ? "Saving…" : "Save business details"}
+                  </Button>
+                </div>
+              </fieldset>
+            </form>
+          </>
+        )}
+      </div>
+    </WorkspaceShell>
+  );
 }

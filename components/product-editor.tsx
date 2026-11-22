@@ -99,7 +99,18 @@ export function ProductEditor({ id }: { id: string }) {
   const [endsAt, setEndsAt] = useState("");
   const [terms, setTerms] = useState("");
   const productFormRef = useRef<HTMLFormElement>(null);
-  const online = useAutosave({ dirty, revision: JSON.stringify(form), blocked: !product || !!busy || conflict || offerDirty || !!file || !!error, save: () => { if (productFormRef.current?.checkValidity()) productFormRef.current.requestSubmit(); }, reconnect: () => { if (!conflict) setError(""); } });
+  const online = useAutosave({
+    dirty,
+    revision: JSON.stringify(form),
+    blocked: !product || !!busy || conflict || offerDirty || !!file || !!error,
+    save: () => {
+      if (productFormRef.current?.checkValidity())
+        productFormRef.current.requestSubmit();
+    },
+    reconnect: () => {
+      if (!conflict) setError("");
+    },
+  });
   const errorRef = useRef<HTMLDivElement>(null);
   const load = useCallback(async () => {
     setLoading(true);
@@ -216,8 +227,7 @@ export function ProductEditor({ id }: { id: string }) {
       setForm(formFrom(saved));
       setDirty(false);
       setNotice("Product details saved.");
-      if (id === "new")
-        router.replace(returnTo);
+      if (id === "new") router.replace(returnTo);
     } catch (err) {
       failure(err);
     } finally {
@@ -607,7 +617,9 @@ export function ProductEditor({ id }: { id: string }) {
                   {busy === "save"
                     ? "Saving…"
                     : dirty
-                      ? (online ? "Unsaved changes · autosave pending" : "Offline · changes remain in this tab")
+                      ? online
+                        ? "Unsaved changes · autosave pending"
+                        : "Offline · changes remain in this tab"
                       : product
                         ? `Saved ${dateTime(product.updatedAt)}`
                         : "Save details to add a photo or offer."}
