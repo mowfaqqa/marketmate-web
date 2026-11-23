@@ -436,7 +436,7 @@
   font-weight: 600;
   font-size: 15px;
 }
-.mm-waitlist input {
+.mm-waitlist :is(input, textarea) {
   width: 100%;
   padding: 13px 16px;
   font-size: 16px;
@@ -444,7 +444,10 @@
   border: 1px solid #839489;
   border-radius: 9px;
 }
-.mm-waitlist input:focus-visible {
+.mm-waitlist textarea {
+  resize: vertical;
+}
+.mm-waitlist :is(input, textarea):focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }

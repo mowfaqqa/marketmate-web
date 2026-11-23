@@ -76,6 +76,16 @@ export default function WaitlistForm() {
             maxLength={250}
             readOnly={pending}
           />
+          <label htmlFor="waitlist-challenges">
+            What challenges are you facing in your business? (optional)
+          </label>
+          <textarea
+            id="waitlist-challenges"
+            name="challenges"
+            rows={3}
+            maxLength={1000}
+            readOnly={pending}
+          />
           {error && <p role="alert">{error}</p>}
           <button className="mm-primary" type="submit" disabled={pending}>
             {pending ? "Joining…" : "Join the waitlist"}{" "}
