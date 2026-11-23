@@ -1,13 +1,20 @@
 import type { NextConfig } from "next";
+
 const config: NextConfig = {
-  experimental: { proxyClientMaxBodySize: "12mb" },
+  // Only explicitly public route files are built for the early-access launch.
+  pageExtensions: ["public.tsx", "public.ts"],
   async rewrites() {
-    return [
-      {
-        source: "/api/:path*",
-        destination: `${process.env.API_ORIGIN || "http://127.0.0.1:4100"}/api/:path*`,
-      },
-    ];
+    return {
+      beforeFiles: [
+        {
+          source: "/api/waitlist",
+          destination: `${process.env.API_ORIGIN || "http://127.0.0.1:4100"}/api/waitlist`,
+        },
+      ],
+      afterFiles: [],
+      fallback: [],
+    };
   },
 };
+
 export default config;
