@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 export const metadata: Metadata = {
+  icons: { icon: "/favicon.ico" },
   title: "MarketMate — Create. Promote. Sell.",
   description: "Your everyday marketing workspace.",
 };
