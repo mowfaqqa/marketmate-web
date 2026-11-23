@@ -1,2 +1,4 @@
-import { AuthForm } from '@/components/auth-form';
-export default function Page() { return <AuthForm mode="verify-email" />; }
+import { AuthForm } from "@/components/auth-form";
+export default function Page() {
+  return <AuthForm mode="verify-email" />;
+}

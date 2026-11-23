@@ -130,7 +130,8 @@ function StudioWorkspace() {
     try {
       await fn();
     } catch (err) {
-      if (err instanceof ApiError && err.status === 409) setAutosaveConflict(true);
+      if (err instanceof ApiError && err.status === 409)
+        setAutosaveConflict(true);
       setError(err instanceof Error ? err.message : "Please try again.");
     } finally {
       setBusy(false);
@@ -142,17 +143,40 @@ function StudioWorkspace() {
       (draft, index, all) =>
         all.findIndex((item) => item.variant === draft.variant) === index,
     ) ?? [];
-  const changedDraft = latest.find(draft => edits[draft.id] !== undefined && edits[draft.id] !== draft.text);
+  const changedDraft = latest.find(
+    (draft) => edits[draft.id] !== undefined && edits[draft.id] !== draft.text,
+  );
   const online = useAutosave({
-    dirty: !!changedDraft, revision: JSON.stringify(edits),
-    blocked: busy || autosaveConflict || !!error || !!job?.archived || !changedDraft || !edits[changedDraft.id]?.trim(),
+    dirty: !!changedDraft,
+    revision: JSON.stringify(edits),
+    blocked:
+      busy ||
+      autosaveConflict ||
+      !!error ||
+      !!job?.archived ||
+      !changedDraft ||
+      !edits[changedDraft.id]?.trim(),
     reconnect: () => setError(""),
-    save: () => { if (job && changedDraft) void action(async () => {
-      const saved = await post<Draft>(`/studio/${job.id}/edit`, { draftId: changedDraft.id, text: edits[changedDraft.id] });
-      setJob(current => current?.id === job.id ? { ...current, drafts: [saved, ...current.drafts] } : current);
-      setEdits(current => { const next = { ...current }; delete next[changedDraft.id]; return next; });
-      setNotice("Revision saved. Review it before approving.");
-    }); },
+    save: () => {
+      if (job && changedDraft)
+        void action(async () => {
+          const saved = await post<Draft>(`/studio/${job.id}/edit`, {
+            draftId: changedDraft.id,
+            text: edits[changedDraft.id],
+          });
+          setJob((current) =>
+            current?.id === job.id
+              ? { ...current, drafts: [saved, ...current.drafts] }
+              : current,
+          );
+          setEdits((current) => {
+            const next = { ...current };
+            delete next[changedDraft.id];
+            return next;
+          });
+          setNotice("Revision saved. Review it before approving.");
+        });
+    },
   });
   return (
     <div className="mx-auto max-w-4xl space-y-6">
@@ -382,15 +406,22 @@ function StudioWorkspace() {
                     className="min-h-28 rounded border p-2"
                     disabled={job.archived || busy}
                     value={edited}
-                    onChange={(e) =>
-                      (setError(""), setEdits((old) => ({
+                    onChange={(e) => (
+                      setError(""),
+                      setEdits((old) => ({
                         ...old,
                         [draft.id]: e.target.value,
-                      })))
-                    }
+                      }))
+                    )}
                   />
                 </label>
-                <p role="status" className="text-sm text-muted-foreground">{change ? (online ? "Unsaved changes · autosave pending" : "Offline · changes remain in this tab") : "Saved revision"}</p>
+                <p role="status" className="text-sm text-muted-foreground">
+                  {change
+                    ? online
+                      ? "Unsaved changes · autosave pending"
+                      : "Offline · changes remain in this tab"
+                    : "Saved revision"}
+                </p>
                 <div className="flex flex-wrap gap-2">
                   {(["edit", "approve", "copy"] as const).map((operation) => (
                     <Button
@@ -429,7 +460,9 @@ function StudioWorkspace() {
                     </Button>
                   ))}
                 </div>
-                {draft.approvedAt && !job.archived && !change && <SharePromotion jobId={job.id} draftId={draft.id} />}
+                {draft.approvedAt && !job.archived && !change && (
+                  <SharePromotion jobId={job.id} draftId={draft.id} />
+                )}
                 {draft.approvedAt && !job.archived && !change && (
                   <StudioGraphic
                     jobId={job.id}
@@ -532,7 +565,11 @@ function StudioWorkspace() {
             key={item.id}
             onClick={() =>
               void action(async () => {
-                if (changedDraft && !confirm("Open saved work? Copy any unsaved text first.")) return;
+                if (
+                  changedDraft &&
+                  !confirm("Open saved work? Copy any unsaved text first.")
+                )
+                  return;
                 setJob(await api<Job>(`/studio/${item.id}`));
                 setAutosaveConflict(false);
               })

@@ -108,7 +108,8 @@ function DayCard({
     try {
       await fn();
     } catch (err) {
-      if (err instanceof ApiError && err.status === 409) setAutosaveConflict(true);
+      if (err instanceof ApiError && err.status === 409)
+        setAutosaveConflict(true);
       setError(err instanceof Error ? err.message : "Please try again.");
     } finally {
       setBusy(false);
@@ -131,9 +132,21 @@ function DayCard({
   }
 
   const online = useAutosave({
-    dirty: changed, revision: JSON.stringify({ text, task, channel, productId, date }),
-    blocked: busy || waiting || autosaveConflict || !!error || !!day.completedAt || date !== day.date || !text.trim() || !task.trim(),
-    save: () => { void action(() => save(false)); }, reconnect: () => setError(""),
+    dirty: changed,
+    revision: JSON.stringify({ text, task, channel, productId, date }),
+    blocked:
+      busy ||
+      waiting ||
+      autosaveConflict ||
+      !!error ||
+      !!day.completedAt ||
+      date !== day.date ||
+      !text.trim() ||
+      !task.trim(),
+    save: () => {
+      void action(() => save(false));
+    },
+    reconnect: () => setError(""),
   });
   return (
     <article className="space-y-3 rounded-xl border bg-white p-4">
@@ -229,7 +242,10 @@ function DayCard({
             className="min-h-24 rounded border p-2"
             maxLength={channel === "whatsapp" ? 600 : 1200}
             value={text}
-            onChange={(e) => { setError(""); setText(e.target.value); }}
+            onChange={(e) => {
+              setError("");
+              setText(e.target.value);
+            }}
           />
         </label>
       </fieldset>
@@ -339,9 +355,22 @@ function DayCard({
           {error}
         </p>
       )}
-      {autosaveConflict && <p role="alert">Autosave paused because the saved item changed. Copy your text, then reload the planner to review the latest version.</p>}
-      {changed && <p role="status" className="text-sm">{online ? "Unsaved changes · autosave pauses for completed tasks and date swaps" : "Offline · changes remain in this tab"}</p>}
-      {!changed && draft.approvedAt && !stale && <SharePromotion jobId={day.job.id} draftId={draft.id} />}
+      {autosaveConflict && (
+        <p role="alert">
+          Autosave paused because the saved item changed. Copy your text, then
+          reload the planner to review the latest version.
+        </p>
+      )}
+      {changed && (
+        <p role="status" className="text-sm">
+          {online
+            ? "Unsaved changes · autosave pauses for completed tasks and date swaps"
+            : "Offline · changes remain in this tab"}
+        </p>
+      )}
+      {!changed && draft.approvedAt && !stale && (
+        <SharePromotion jobId={day.job.id} draftId={draft.id} />
+      )}
       {copy && (
         <p role="status" className="whitespace-pre-wrap text-sm">
           {copy}

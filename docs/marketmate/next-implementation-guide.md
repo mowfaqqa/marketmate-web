@@ -25,6 +25,7 @@ Branch: `feat/live-marketing-generation`.
 Provider decision: OpenAI (confirmed). Implement now; configure the model, current token prices and deployment-wide daily budget before the deferred live tests. Keep credentials in server environment configuration; never request them in chat.
 
 Implementation:
+
 1. Add a small provider module with a typed request/result contract and one concrete selected-provider adapter. Retain the explicitly labelled local generator for tests.
 2. Keep prompt construction and output validation separate from the adapter. Treat product text as untrusted input. Insert prices, contact details and offer dates from validated snapshots.
 3. Connect Studio jobs to the adapter. Claim work transactionally before provider calls; use bounded deadlines and at most one malformed-output repair. Track attempts and settle each reservation once.
@@ -39,6 +40,7 @@ Completion evidence: three valid text variants; seven dated plan items; duplicat
 Branch: `feat/sales-documents`.
 
 Implement in order:
+
 1. Tenant-owned customer records and draft quotation/invoice models.
 2. Pure, tested money calculations using integer kobo and explicit decimal quantities/rates. Follow the PRD rounding and limits; do not infer tax rates.
 3. Draft editor with customer, product lines, delivery, discounts and payment instructions; use authoritative server totals.

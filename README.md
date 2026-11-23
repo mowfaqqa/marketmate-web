@@ -11,4 +11,6 @@ Open http://localhost:3000. Requests to `/api` are forwarded to the NestJS API a
 
 Run `pnpm check:deps` to check dependencies and `pnpm check` for TypeScript. Build with `pnpm build` and serve the production build with `pnpm start`.
 
+Run `pnpm format` to format the codebase with Prettier, or `pnpm format:check` to check formatting without changing files.
+
 Product requirements, design flows and historical milestone notes are under `docs/marketmate/`. Paths and commands in those notes refer to the original workspace.
