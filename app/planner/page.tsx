@@ -1,5 +1,6 @@
 "use client";
 import { useAutosave } from "@/hooks/use-autosave";
+import { CalendarDays } from "lucide-react";
 import { SharePromotion } from "@/components/share-promotion";
 
 import { useEffect, useState, type FormEvent } from "react";
@@ -149,7 +150,11 @@ function DayCard({
     reconnect: () => setError(""),
   });
   return (
-    <article className="space-y-3 rounded-xl border bg-white p-4">
+    <article
+      id={`plan-day-${day.id}`}
+      tabIndex={-1}
+      className="card scroll-mt-4 space-y-5"
+    >
       <header>
         <h3 className="font-semibold">
           {dateLabel(day.date)} · {day.theme}
@@ -181,7 +186,7 @@ function DayCard({
         disabled={busy || waiting}
         className="grid gap-3 sm:grid-cols-2"
       >
-        <label className="grid gap-1">
+        <label className="field">
           Date
           <select
             className="rounded border p-2"
@@ -195,7 +200,7 @@ function DayCard({
             ))}
           </select>
         </label>
-        <label className="grid gap-1">
+        <label className="field">
           Channel
           <select
             className="rounded border p-2"
@@ -206,7 +211,7 @@ function DayCard({
             <option value="whatsapp">WhatsApp</option>
           </select>
         </label>
-        <label className="grid gap-1">
+        <label className="field">
           Product
           <select
             className="rounded border p-2"
@@ -227,7 +232,7 @@ function DayCard({
             ))}
           </select>
         </label>
-        <label className="grid gap-1">
+        <label className="field">
           Task
           <input
             className="rounded border p-2"
@@ -498,11 +503,14 @@ function PlannerWorkspace() {
   const plan =
     overview?.plans.find((item) => item.id === open) ?? overview?.plans[0];
   return (
-    <div className="mx-auto max-w-4xl space-y-6">
+    <div className="space-y-6">
       <header>
-        <h1 className="text-3xl font-semibold">Marketing planner</h1>
+        <h1 className="workspace-title">Marketing planner</h1>
+        <p className="mt-2 text-muted-foreground">
+          Build a week of posts and review each day before sharing.
+        </p>
         {overview && (
-          <p className="mt-2 text-sm text-slate-600">
+          <p className="mt-4 inline-block rounded-lg bg-green-50 px-3 py-2 text-sm text-primary-hover">
             {overview.usage.remaining} units available · Lagos calendar
           </p>
         )}
@@ -518,19 +526,24 @@ function PlannerWorkspace() {
           prepare the captions. You review and share them yourself.
         </p>
       )}
+      {!overview && !error && (
+        <p role="status" className="card text-muted-foreground">
+          Loading your planner…
+        </p>
+      )}
       {overview && (
-        <form
-          onSubmit={create}
-          className="space-y-3 rounded-xl border bg-white p-4"
-        >
-          <h2 className="text-lg font-semibold">Plan seven days</h2>
+        <form onSubmit={create} className="card space-y-5">
+          <h2 className="workspace-panel-title">
+            <CalendarDays size={20} />
+            Plan seven days
+          </h2>
           <fieldset
             disabled={busy || !overview.enabled}
             className="space-y-3"
             onChange={() => setKey("")}
           >
             <div className="grid gap-3 sm:grid-cols-2">
-              <label className="grid gap-1">
+              <label className="field">
                 Start date
                 <input
                   required
@@ -544,7 +557,7 @@ function PlannerWorkspace() {
                   className="rounded border p-2"
                 />
               </label>
-              <label className="grid gap-1">
+              <label className="field">
                 Goal
                 <select
                   value={goal}
@@ -559,12 +572,14 @@ function PlannerWorkspace() {
                 </select>
               </label>
             </div>
-            <fieldset className="grid max-h-44 gap-2 overflow-auto">
-              <legend>Choose up to five active products</legend>
+            <fieldset className="grid max-h-56 gap-2 overflow-auto sm:grid-cols-2">
+              <legend className="mb-2 text-sm font-semibold">
+                Choose up to five active products
+              </legend>
               {products.map((product) => (
                 <label
                   key={product.id}
-                  className="flex min-h-9 items-center gap-2"
+                  className="flex min-h-11 items-center gap-3 rounded-lg border border-border px-3 has-checked:bg-green-50"
                 >
                   <input
                     type="checkbox"
@@ -606,7 +621,7 @@ function PlannerWorkspace() {
       )}
       {overview && plan && (
         <section className="space-y-4">
-          <label className="grid gap-1">
+          <label className="field">
             Saved plan
             <select
               className="rounded border p-2"
@@ -639,6 +654,22 @@ function PlannerWorkspace() {
               This plan could not be generated. Its three units were released.
               You can write captions manually or create another plan.
             </p>
+          )}
+          {plan.days.length > 0 && (
+            <nav
+              aria-label="Jump to a plan day"
+              className="grid grid-cols-3 gap-2 sm:grid-cols-7"
+            >
+              {plan.days.map((day) => (
+                <a
+                  key={day.id}
+                  href={`#plan-day-${day.id}`}
+                  className="rounded-lg border border-border bg-white px-2 py-3 text-center text-sm text-primary-hover hover:bg-green-50"
+                >
+                  <time dateTime={day.date}>{dateLabel(day.date)}</time>
+                </a>
+              ))}
+            </nav>
           )}
           {plan.days.map((day) => (
             <DayCard

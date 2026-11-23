@@ -1,4 +1,5 @@
 "use client";
+import { FileText, ListFilter, Plus } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
@@ -41,91 +42,100 @@ export function SalesList() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Invoices & quotations</h1>
+          <h1 className="workspace-title">Invoices & quotations</h1>
           <p className="mt-2 text-muted-foreground">
             Turn an inquiry into a clear sales document.
           </p>
         </div>
         <Button asChild>
-          <Link href="/invoices/new">Create document</Link>
+          <Link href="/invoices/new">
+            <Plus size={17} />
+            Create document
+          </Link>
         </Button>
       </div>
-      <div className="card grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        <label>
-          Customer or number
-          <input
-            className={inputClass}
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setPage(1);
-            }}
-          />
-        </label>
-        <label>
-          Type
-          <select
-            className={inputClass}
-            value={type}
-            onChange={(e) => {
-              setType(e.target.value);
-              setPage(1);
-            }}
-          >
-            <option value="">All types</option>
-            <option>INVOICE</option>
-            <option>QUOTATION</option>
-          </select>
-        </label>
-        <label>
-          Status
-          <select
-            className={inputClass}
-            value={status}
-            onChange={(e) => {
-              setStatus(e.target.value);
-              setPage(1);
-            }}
-          >
-            <option value="">All statuses</option>
-            {[
-              "DRAFT",
-              "ISSUED",
-              "VOID",
-              "UNPAID",
-              "PARTIAL",
-              "PAID",
-              "OVERDUE",
-            ].map((s) => (
-              <option key={s}>{s}</option>
-            ))}
-          </select>
-        </label>
-        <label>
-          Created from
-          <input
-            type="date"
-            className={inputClass}
-            value={from}
-            onChange={(e) => {
-              setFrom(e.target.value);
-              setPage(1);
-            }}
-          />
-        </label>
-        <label>
-          Created through
-          <input
-            type="date"
-            className={inputClass}
-            value={to}
-            onChange={(e) => {
-              setTo(e.target.value);
-              setPage(1);
-            }}
-          />
-        </label>
-      </div>
+      <section className="card">
+        <h2 className="workspace-panel-title mb-4">
+          <ListFilter size={20} />
+          Filter documents
+        </h2>
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          <label className="field">
+            Customer or number
+            <input
+              className={inputClass}
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(1);
+              }}
+            />
+          </label>
+          <label className="field">
+            Type
+            <select
+              className={inputClass}
+              value={type}
+              onChange={(e) => {
+                setType(e.target.value);
+                setPage(1);
+              }}
+            >
+              <option value="">All types</option>
+              <option>INVOICE</option>
+              <option>QUOTATION</option>
+            </select>
+          </label>
+          <label className="field">
+            Status
+            <select
+              className={inputClass}
+              value={status}
+              onChange={(e) => {
+                setStatus(e.target.value);
+                setPage(1);
+              }}
+            >
+              <option value="">All statuses</option>
+              {[
+                "DRAFT",
+                "ISSUED",
+                "VOID",
+                "UNPAID",
+                "PARTIAL",
+                "PAID",
+                "OVERDUE",
+              ].map((s) => (
+                <option key={s}>{s}</option>
+              ))}
+            </select>
+          </label>
+          <label className="field">
+            Created from
+            <input
+              type="date"
+              className={inputClass}
+              value={from}
+              onChange={(e) => {
+                setFrom(e.target.value);
+                setPage(1);
+              }}
+            />
+          </label>
+          <label className="field">
+            Created through
+            <input
+              type="date"
+              className={inputClass}
+              value={to}
+              onChange={(e) => {
+                setTo(e.target.value);
+                setPage(1);
+              }}
+            />
+          </label>
+        </div>
+      </section>
       {error ? (
         <div role="alert">
           {error}{" "}
@@ -144,15 +154,16 @@ export function SalesList() {
           started.
         </p>
       ) : (
-        <div className="space-y-3">
+        <div className="divide-y divide-border overflow-hidden rounded-xl border border-border bg-white">
           {data.items.map((row) => (
             <Link
-              className="card flex flex-wrap items-center justify-between gap-3"
+              className="flex min-h-16 flex-wrap items-center justify-between gap-3 px-5 py-4 hover:bg-background focus-visible:outline-offset-[-3px]"
               key={row.id}
               href={`/invoices/${row.id}`}
             >
               <div>
-                <p className="font-semibold">
+                <p className="flex items-center gap-2 font-semibold">
+                  <FileText size={17} className="shrink-0 text-primary" />
                   {row.number ?? `Draft ${row.type.toLowerCase()}`}
                 </p>
                 <p>{row.buyer.name}</p>
@@ -163,7 +174,9 @@ export function SalesList() {
                 </p>
               </div>
               <div>
-                <p className="font-semibold">{money(row.totalKobo)}</p>
+                <p className="font-semibold tabular-nums">
+                  {money(row.totalKobo)}
+                </p>
                 {row.type === "INVOICE" && row.status === "ISSUED" && (
                   <p className="text-sm">Remaining {money(row.balanceKobo)}</p>
                 )}

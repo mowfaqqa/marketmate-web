@@ -23,6 +23,11 @@ export function WorkspaceShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const selected = (href: string) =>
     pathname === href || pathname.startsWith(href + "/");
+  const section =
+    navigation.find(({ href }) => selected(href))?.label ?? "More";
+  const moreSelected = ["/more", "/settings", "/invoices", "/planner"].some(
+    selected,
+  );
   return (
     <div className="min-h-screen lg:pl-64">
       <a
@@ -31,54 +36,55 @@ export function WorkspaceShell({ children }: { children: React.ReactNode }) {
       >
         Skip to content
       </a>
-      <aside className="fixed inset-y-0 left-0 hidden w-64 flex-col border-r border-border bg-white p-6 lg:flex">
+      <aside className="fixed inset-y-0 left-0 hidden w-64 flex-col bg-primary-hover text-white px-4 py-6 lg:flex">
         <Link
           href="/dashboard"
-          className="flex items-center gap-2 text-2xl font-bold tracking-tight"
+          className="flex items-center min-h-11 gap-2 px-2 text-2xl font-bold tracking-tight"
         >
-          <span className="rounded-lg bg-primary p-2 text-white">
+          <span className="rounded-lg bg-white p-2 text-primary-hover">
             <Leaf size={22} />
           </span>
           MarketMate
         </Link>
-        <p className="mb-10 mt-2 pl-11 text-xs text-muted-foreground">
+        <p className="mb-8 mt-1 pl-14 text-xs text-green-100">
           Create. Promote. Sell.
         </p>
-        <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-slate-400">
-          Workspace
-        </p>
-        <nav aria-label="Main navigation" className="space-y-2">
+
+        <nav
+          aria-label="Main navigation"
+          className="space-y-1 border-t border-white/20 pt-5"
+        >
           {navigation.map(({ label, href, icon: Icon }) => (
             <Link
               key={href}
               href={href}
               aria-current={selected(href) ? "page" : undefined}
-              className={`flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm ${selected(href) ? "bg-green-50 font-semibold text-primary" : "text-muted-foreground hover:bg-slate-50"}`}
+              className={`flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm ${selected(href) ? "bg-white font-semibold text-primary-hover" : "text-green-50 hover:bg-white/10"}`}
             >
               <Icon size={19} />
               {label}
             </Link>
           ))}
         </nav>
-        <div className="mt-auto rounded-xl bg-slate-50 p-4 text-sm">
-          <p className="font-semibold">Built for your next sale</p>
-          <p className="mt-2 text-muted-foreground">
-            A little consistency goes a long way.
-          </p>
-        </div>
       </aside>
-      <header className="flex min-h-20 items-center justify-between border-b border-slate-200 bg-white px-5 lg:px-10">
-        <Link href="/dashboard" className="font-semibold lg:hidden">
-          MarketMate
+      <header className="flex min-h-16 items-center justify-between border-b border-slate-200 bg-white px-5 lg:px-10">
+        <Link
+          href="/dashboard"
+          className="inline-flex min-h-11 items-center gap-2 font-semibold lg:hidden"
+        >
+          <Leaf size={20} className="text-primary" /> MarketMate
         </Link>
-        <span className="hidden font-semibold lg:inline">Your workspace</span>
-        <span className="rounded-full border border-green-200 bg-green-50 px-3 py-1 text-xs font-medium text-primary">
+        <span className="hidden items-center gap-3 text-sm text-muted-foreground lg:flex">
+          Workspace <span aria-hidden="true">/</span>
+          <strong className="font-semibold text-foreground">{section}</strong>
+        </span>
+        <span className="rounded-full border border-border bg-background px-3 py-1 text-xs font-medium text-primary">
           Development preview
         </span>
       </header>
       <main
         id="main-content"
-        className="mx-auto max-w-6xl px-5 py-8 pb-28 lg:px-10"
+        className="mx-auto max-w-7xl px-4 sm:px-6 py-8 pb-28 lg:px-10"
       >
         {children}
       </main>
@@ -95,8 +101,14 @@ export function WorkspaceShell({ children }: { children: React.ReactNode }) {
           <Link
             key={href}
             href={href}
-            aria-current={selected(href) ? "page" : undefined}
-            className={`flex min-h-16 min-w-16 flex-col items-center justify-center gap-1 px-2 text-xs ${selected(href) ? "font-semibold text-primary" : "text-muted-foreground"}`}
+            aria-current={
+              selected(href)
+                ? "page"
+                : href === "/more" && moreSelected
+                  ? "location"
+                  : undefined
+            }
+            className={`flex min-h-16 min-w-16 flex-col items-center justify-center gap-1 px-2 text-xs ${(href === "/more" ? moreSelected : selected(href)) ? "font-semibold text-primary" : "text-muted-foreground"}`}
           >
             <Icon size={20} />
             {label}

@@ -1,6 +1,9 @@
 @import "tailwindcss";
 @theme {
   --color-primary: #166534;
+  --color-primary-hover: #14532d;
+  --color-focus: #2563eb;
+  --color-surface: #fff;
   --color-background: #f8fafc;
   --color-foreground: #111827;
   --color-muted-foreground: #475569;
@@ -11,8 +14,8 @@
 }
 body {
   margin: 0;
-  background: #f8fafc;
-  color: #111827;
+  background: var(--color-background);
+  color: var(--color-foreground);
   font-family: Arial, Helvetica, sans-serif;
   font-size: 16px;
   line-height: 1.5;
@@ -31,14 +34,16 @@ a {
   -webkit-tap-highlight-color: transparent;
 }
 :focus-visible {
-  outline: 2px solid #2563eb;
+  outline: 2px solid var(--color-focus);
   outline-offset: 3px;
 }
-.card {
-  background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 24px;
+@layer components {
+  .card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    padding: 24px;
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   * {
@@ -47,6 +52,7 @@ a {
 }
 
 .field {
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -57,10 +63,59 @@ a {
 .field textarea,
 .field select {
   min-height: 44px;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--color-border);
   border-radius: 8px;
   padding: 10px 12px;
-  background: white;
-  color: #111827;
+  background: var(--color-surface);
+  color: var(--color-foreground);
   width: 100%;
+}
+
+.field :is(input, select, textarea):enabled:hover {
+  border-color: var(--color-muted-foreground);
+}
+.field :is(input, select, textarea):focus-visible {
+  border-color: var(--color-focus);
+}
+.field [aria-invalid="true"] {
+  border-color: var(--color-red-700);
+}
+::selection {
+  background: #d9eedf;
+  color: var(--color-primary-hover);
+}
+@media (max-width: 639px) {
+  .field input,
+  .field select,
+  .field textarea {
+    font-size: 16px;
+  }
+}
+
+@layer components {
+  .workspace-title {
+    font-size: clamp(1.65rem, 3vw, 2rem);
+    line-height: 1.15;
+    font-weight: 650;
+    letter-spacing: -0.035em;
+  }
+  .workspace-panel-title {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    font-size: 1.25rem;
+    line-height: 1.4;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+  }
+  .workspace-panel-title svg {
+    flex: none;
+    color: var(--color-primary);
+  }
+  .workspace-notice {
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: var(--color-green-50);
+    color: var(--color-primary-hover);
+  }
 }

@@ -60,7 +60,7 @@ export function BusinessLogo({
     }
   }
   return (
-    <section className="card my-6 space-y-4">
+    <section className="card min-w-0 space-y-4">
       <h2 className="text-xl font-semibold">Business logo</h2>
       {business.logoKey && (
         <img
@@ -101,7 +101,7 @@ export function BusinessLogo({
           />
           I own this logo or have permission to use it.
         </label>
-        <div className="flex gap-3">
+        <div className="flex flex-wrap gap-3">
           <Button disabled={!file || !rights} onClick={() => void change()}>
             {busy ? "Saving…" : "Upload logo"}
           </Button>

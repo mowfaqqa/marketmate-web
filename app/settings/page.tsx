@@ -132,7 +132,7 @@ export default function Settings() {
   }
   return (
     <WorkspaceShell>
-      <div className="mx-auto max-w-4xl">
+      <div className="min-w-0">
         <header className="mb-8 flex flex-wrap items-center justify-between gap-4">
           <Link
             href="/dashboard"
@@ -156,9 +156,7 @@ export default function Settings() {
             Sign out
           </Button>
         </header>
-        <h1 className="text-3xl font-semibold">
-          Your business, in your own words.
-        </h1>
+        <h1 className="workspace-title">Business settings</h1>
         <p className="mb-8 mt-3 text-muted-foreground">
           These are the facts your marketing will start from. You can update
           them anytime.
@@ -185,35 +183,37 @@ export default function Settings() {
           </p>
         )}
         {!business ? (
-          <p role="status">Loading your business…</p>
+          !error && <p role="status">Loading your business…</p>
         ) : (
-          <>
-            <section className="card mb-6 flex flex-wrap items-center justify-between gap-4">
-              <div>
-                <p className="font-semibold">{account?.email}</p>
-                <p className="text-sm text-muted-foreground">
-                  {account?.verified
-                    ? "Email verified"
-                    : "Verify your email before using AI generation."}
-                </p>
-              </div>
-              {account?.verified ? (
-                <Check className="text-primary" />
-              ) : (
-                <Button
-                  variant="outline"
-                  onClick={() => void action("/auth/resend-verification")}
-                >
-                  Resend verification email
-                </Button>
-              )}
-            </section>
-            <BusinessLogo
-              business={business}
-              disabled={dirty || saving || conflict}
-              onSaved={setBusiness}
-              onBusy={setLogoBusy}
-            />
+          <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.7fr)]">
+            <aside className="grid min-w-0 gap-4">
+              <section className="card break-words flex flex-wrap items-center justify-between gap-4">
+                <div>
+                  <p className="font-semibold">{account?.email}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {account?.verified
+                      ? "Email verified"
+                      : "Verify your email before using AI generation."}
+                  </p>
+                </div>
+                {account?.verified ? (
+                  <Check className="text-primary" />
+                ) : (
+                  <Button
+                    variant="outline"
+                    onClick={() => void action("/auth/resend-verification")}
+                  >
+                    Resend verification email
+                  </Button>
+                )}
+              </section>
+              <BusinessLogo
+                business={business}
+                disabled={dirty || saving || conflict}
+                onSaved={setBusiness}
+                onBusy={setLogoBusy}
+              />
+            </aside>
             <form ref={formRef} onSubmit={save} className="card">
               <fieldset disabled={saving || logoBusy} className="space-y-6">
                 <h2 className="text-xl font-semibold">Business profile</h2>
@@ -274,6 +274,9 @@ export default function Settings() {
                     spaces.
                   </span>
                 </label>
+                <h3 className="border-t border-border pt-5 text-lg font-semibold">
+                  Brand preferences
+                </h3>
                 <div className="grid gap-5 sm:grid-cols-2">
                   <label className="field">
                     Your tone
@@ -365,7 +368,7 @@ export default function Settings() {
                 </div>
               </fieldset>
             </form>
-          </>
+          </div>
         )}
       </div>
     </WorkspaceShell>
