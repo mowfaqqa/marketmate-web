@@ -5,9 +5,9 @@ import {
   ArrowRight,
   CalendarDays,
   FileText,
-  Leaf,
   WandSparkles,
 } from "lucide-react";
+import Brand from "@/components/landing/brand";
 import CampaignPreview from "@/components/landing/campaign-preview";
 import "./landing.css";
 
@@ -35,17 +35,6 @@ const steps = [
   },
 ];
 
-function Brand() {
-  return (
-    <Link href="/" className="mm-brand">
-      <span>
-        <Leaf size={22} aria-hidden="true" />
-      </span>
-      MarketMate
-    </Link>
-  );
-}
-
 export default function LandingPage() {
   return (
     <div className="mm">
@@ -60,8 +49,8 @@ export default function LandingPage() {
               How it works
             </a>
             <Link href="/login">Sign in</Link>
-            <Link className="mm-nav-action" href="/register">
-              Create account
+            <Link className="mm-nav-action" href="/waitlist">
+              Join the waitlist
             </Link>
           </nav>
         </div>
@@ -81,8 +70,8 @@ export default function LandingPage() {
                 one place.
               </p>
               <div className="mm-actions">
-                <Link className="mm-primary" href="/register">
-                  Create your account <ArrowRight size={18} />
+                <Link className="mm-primary" href="/waitlist">
+                  Join the waitlist <ArrowRight size={18} />
                 </Link>
                 <a className="mm-secondary" href="#workflow">
                   See how it works <ArrowDown size={16} />
